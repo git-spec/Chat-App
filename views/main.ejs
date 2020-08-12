@@ -22,22 +22,17 @@
 				<form method="POST" action="/chat">
 					<div class="form-control">
 						<label for="firstname">Firstname</label>
-						<input type="text" name="firstname" id="firstname" placeholder="Firstname" required />
+						<input type="text" name="firstname" id="firstname" placeholder="Enter Firstname" required />
 						<label for="lastname">Lastname</label>
-						<input type="text" name="lastname" id="lastname" placeholder="Lastname" required />
+						<input type="text" name="lastname" id="lastname" placeholder="Enter Lastname" required />
 						<label for="username">Username</label>
 						<input type="text" name="username" id="username" placeholder="Enter Username" required />
-					</div>
-					<div class="form-control">
-						<label for="room">Room</label>
-						<select name="room" id="room">
-							<option value="JavaScript">JavaScript</option>
-							<option value="Python">Python</option>
-							<option value="PHP">PHP</option>
-							<option value="C#">C#</option>
-							<option value="Ruby">Ruby</option>
-							<option value="Java">Java</option>
-						</select>
+						<label for="email">Email</label>
+						<input type="text" name="email" id="email" placeholder="Enter Email" required />
+						<label for="password">Password</label>
+						<input type="password" name="password" id="password" placeholder="Enter Password" required />
+						<label for="repassword">Confirmation</label>
+						<input type="password" name="repassword" id="repassword" placeholder="Confirm Password" required />
 					</div>
 					<button type="submit" class="btn">Join Chat</button>
 				</form>
@@ -46,8 +41,46 @@
 		<script>
 			document.querySelector('.btn').addEventListener('click', e => {
 				e.preventDefault()
-				const firstName = document.querySelector('#firstname')
-			})
+				// input data
+				const firstName = document.querySelector('#firstname');
+				const lastName = document.querySelector('#lastname');
+				const userName = document.querySelector('#username');
+				const email = document.querySelector('#email');
+				const password = document.querySelector('#password');
+				const repassword = document.querySelector('#repassword');
+
+				
+				if(firstName.value.trim() && lastName.value.trim() && userName.value.trim() && email.value.trim() && password.value && repassword.value) {
+					if(password.value === repassword.value) {
+						// user object with input data
+						const USER = {
+							firstname: firstName.value.trim(),
+							lastname: lastName.value.trim(),
+							username: userName.value.trim(),
+							email: email.value.trim(),
+							password: password.value
+						}
+						// request
+						fetch('/', {
+							method: 'POST',
+							headers: {
+								'Content-Type': 'application/json'
+							},
+							body: JSON.stringify(USER)
+						}).then(response => {
+							if(response.status === 200) {
+								console.log(response);
+							} else {
+								
+							}
+						}).catch(err => {
+							console.log(err.message);
+						});
+					} else {
+
+					};
+				};
+			});
 		</script>
 	</body>
 </html>

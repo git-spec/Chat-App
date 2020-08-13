@@ -2,7 +2,6 @@
 const path = require('path');
 const http = require('http');
 const express = require('express');
-// const ejs = require 'ejs'
 const socketio = require('socket.io');
 const formatMessage = require('./utils/messages');
 const {
@@ -18,12 +17,14 @@ const io = socketio(server);
 
 // Set static folder
 app.use(express.static(path.join(__dirname, 'public')));
+// parses incoming requests with json payloads to an object
+app.use(express.json());
 
 // set view engine
 app.set('view engine', 'ejs')
-app.set('views', 'views')
+app.set('views', __dirname + '/views')
 
-const botName = 'ChatCord Bot';
+const botName = 'ChatApp Bot';
 
 /* ************************************************************ ROUTES ******************************************************* */
 
@@ -35,7 +36,7 @@ io.on('connection', socket => {
     socket.join(user.room);
 
     // Welcome current user
-    socket.emit('message', formatMessage(botName, 'Welcome to ChatCord!'));
+    socket.emit('message', formatMessage(botName, 'Welcome to ChatApp!'));
 
     // Broadcast when a user connects
     socket.broadcast
@@ -55,7 +56,6 @@ io.on('connection', socket => {
   // Listen for chatMessage
   socket.on('chatMessage', msg => {
     const user = getCurrentUser(socket.id);
-
     io.to(user.room).emit('message', formatMessage(user.username, msg));
   });
 
@@ -75,19 +75,30 @@ io.on('connection', socket => {
         users: getRoomUsers(user.room)
       });
     }
+
   });
+
 });
 
+let username = '';
 // route to main
 app.get('/', (req, res) => {
   res.render('main');
 });
-// route to chat
-app.post('/', (req, res) => {
 
-  res.render('chat');
+// handle with register data
+app.post('/', (req, res) => {
+  console.log(req.body);
+  username = req.body.username;
+  res.json(1);
 });
 
+// route to chat
+app.get('/chat', (req, res) => {
+  res.render('chat', {username});
+});
+
+/* ************************************************************ PORT ******************************************************* */
 
 const PORT = process.env.PORT || 3000;
 

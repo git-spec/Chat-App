@@ -164,7 +164,8 @@ a {
 }
 
 .join-main input[type='text'],
-	.join-main input[type='password'] {
+.join-main input[type='password'],
+.join-main input[type='email'] {
 	font-size: 16px;
 	padding: 5px;
 	height: 40px;
@@ -187,7 +188,7 @@ a {
 	.chat-main {
 		display: block;
 	}
-
+	
 	.chat-sidebar {
 		display: none;
 	}

@@ -2,6 +2,7 @@
 const path = require('path');
 const http = require('http');
 const express = require('express');
+const app = express();
 const socketio = require('socket.io');
 const formatMessage = require('./utils/messages');
 const {
@@ -11,7 +12,13 @@ const {
   getRoomUsers
 } = require('./utils/users');
 
-const app = express();
+// session
+const session = require('express-session');
+app.use(session({
+  secret: 'chat',
+  cookie: {}
+}));
+
 const server = http.createServer(app);
 const io = socketio(server);
 
@@ -80,7 +87,6 @@ io.on('connection', socket => {
 
 });
 
-let username = '';
 // route to main
 app.get('/', (req, res) => {
   res.render('main');
@@ -88,24 +94,35 @@ app.get('/', (req, res) => {
 
 // handle with register data
 app.post('/', (req, res) => {
-  console.log(req.body);
-  username = req.body.username;
+  // console.log(req.body);
+  // let username = req.body.username;
+  req.session.user = req.body.username;
   res.json(1);
-});
-
-// route to main
-app.get('/register', (req, res) => {
-  res.render('main');
 });
 
 // route to room
 app.get('/room', (req, res) => {
-  res.render('room', {username});
+  if (req.session.user) {
+    res.render('room');
+  } else {
+    res.redirect('/');
+  }
 });
 
 // route to chat
 app.get('/chat', (req, res) => {
-  res.render('chat', {username});
+  // console.log(req.params);
+  // console.log(req.query.room)
+  if (req.session.user) {
+    const room = req.query.room 
+    if (room) {
+      res.render('chat', {username: req.session.user, room});
+    } else {
+      res.redirect('/room')
+    }
+  } else {
+    res.redirect('/');
+  }
 });
 
 /* ************************************************************ PORT ******************************************************* */

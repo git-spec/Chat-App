@@ -56,7 +56,7 @@
         // });
 
         const username = '<%=username%>'
-        const room = "JavaScript"
+        const room = '<%=room%>'
 
         const socket = io();
 
@@ -71,7 +71,6 @@
 
         // Message from server
         socket.on('message', message => {
-            debugger
             console.log(message);
             outputMessage(message);
             // Scroll down
@@ -81,7 +80,6 @@
         // Message submit
         chatForm.addEventListener('submit', e => {
             e.preventDefault();
-            debugger
             // Get message text
             const msg = e.target.elements.msg.value;
             // Emit message to server

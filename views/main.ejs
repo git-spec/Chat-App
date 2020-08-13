@@ -23,33 +23,74 @@
 			</header>
 			<main class="join-main">
 				<form method="POST" action="/">
-					<div class="form-control">
-						<label for="firstname">Firstname</label>
-						<input type="text" name="firstname" id="firstname" placeholder="Enter Firstname" required />
-						<label for="lastname">Lastname</label>
-						<input type="text" name="lastname" id="lastname" placeholder="Enter Lastname" required />
-						<label for="username">Username</label>
-						<input type="text" name="username" id="username" placeholder="Enter Username" required />
-						<label for="email">Email</label>
-						<input type="email" name="email" id="email" placeholder="Enter Email" required />
-						<label for="password">Password</label>
-						<input type="password" name="password" id="password" placeholder="Enter Password" required />
-						<label for="repassword">Confirmation</label>
-						<input type="password" name="repassword" id="repassword" placeholder="Confirm Password" required />
-					</div>
-					<button type="submit" class="btn">Join Chat</button>
+					<fieldset id="register" style="display: none;">
+						<legend>Register</legend>
+						<a href="#">Login</a>
+						<div class="form-control">
+							<label for="firstname">Firstname</label>
+							<input type="text" name="firstname" id="firstname" placeholder="Enter Firstname" required />
+							<label for="lastname">Lastname</label>
+							<input type="text" name="lastname" id="lastname" placeholder="Enter Lastname" required />
+							<label for="username">Username</label>
+							<input type="text" name="username" id="reg-username" placeholder="Enter Username" required />
+							<label for="email">Email</label>
+							<input type="email" name="email" id="email" placeholder="Enter Email" required />
+							<label for="password">Password</label>
+							<input type="password" name="password" id="reg-password" placeholder="Enter Password" required />
+							<label for="repassword">Confirmation</label>
+							<input type="password" name="repassword" id="repassword" placeholder="Confirm Password" required />
+						</div>
+						<button type="submit" class="btn" id="register-btn">Join Chat</button>
+					</fieldset>
+					<fieldset id="login">
+						<legend>Login</legend>
+						<a href="#">Register</a>
+						<div class="form-control">
+							<label for="username">Username</label>
+							<input type="text" name="username" id="log-username" placeholder="Enter Username" required />
+							<label for="password">Password</label>
+							<input type="password" name="password" id="log-password" placeholder="Enter Password" required />
+						</div>
+						<button type="submit" class="btn" id="login-btn">Join Chat</button>
+					</fieldset>
 				</form>
 			</main>
 		</div>
 		<script>
-			document.querySelector('.btn').addEventListener('click', e => {
+			// post request to server
+			function request(user) {
+				return fetch('/', {
+					method: 'POST',
+					headers: {
+						'Content-Type': 'application/json'
+					},
+					body: JSON.stringify(user)
+				}).then(response => {
+					if(response.status === 200) {
+						response.json().then(data => {
+							if (data === 1) {
+								window.location = "/room";
+								resolve();
+							}
+						}).catch(err => {
+							reject(err.message);
+						});
+					} else {
+						reject("Can not connect to the server");
+					};
+				}).catch(err => {
+					reject(err.message);
+				});
+			};
+			// register user
+			document.querySelector('#register-btn').addEventListener('click', e => {
 				e.preventDefault()
 				// input data
 				const firstName = document.querySelector('#firstname');
 				const lastName = document.querySelector('#lastname');
-				const userName = document.querySelector('#username');
+				const userName = document.querySelector('#reg-username');
 				const email = document.querySelector('#email');
-				const password = document.querySelector('#password');
+				const password = document.querySelector('#reg-password');
 				const repassword = document.querySelector('#repassword');
 
 				if(firstName.value.trim() && lastName.value.trim() && userName.value.trim() && email.value.trim() && password.value && repassword.value) {
@@ -61,36 +102,49 @@
 							username: userName.value.trim(),
 							email: email.value.trim(),
 							password: password.value
-						}
-						// request
-						fetch('/', {
-							method: 'POST',
-							headers: {
-								'Content-Type': 'application/json'
-							},
-							body: JSON.stringify(USER)
-						}).then(response => {
-							if(response.status === 200) {
-								response.json().then(data => {
-									if (data === 1) {
-										window.location = "/chat";
-									}
-								}).catch(err => {
-									console.log(err.message);
-								})
-							} else {
-								console.log("Can not connect to the server");
-							}
-						}).catch(err => {
-							console.log(err.message);
-						});
+						};
+						request(USER);
 					} else {
 						console.log("Passwords do not match");
 					}
 				} else {
 					console.log("Not all inputs are filled");
-				}
+				};
 			});
+			// login user
+			document.querySelector('#login-btn').addEventListener('click', e => {
+				e.preventDefault()
+				// input data
+				const userName = document.querySelector('#log-username');
+				const password = document.querySelector('#log-password');
+
+				if(userName.value.trim() && password.value) {
+					// user object with input data
+					const USER = {
+						username: userName.value.trim(),
+						password: password.value
+					};
+					request(USER);
+				} else {
+					console.log("Not all inputs are filled");
+				};
+			});
+			// switch from login to register
+			document.querySelector('#login > a').addEventListener('click', e => {
+				e.preventDefault()
+				if(document.querySelector('#register').style.display === 'none') {
+					document.querySelector('#register').style.display = 'block';
+					e.target.parentElement.style.display = 'none';
+				}
+			})
+			// switch from register to login
+			document.querySelector('#register > a').addEventListener('click', e => {
+				e.preventDefault()
+				if(document.querySelector('#login').style.display === 'none') {
+					document.querySelector('#login').style.display = 'block';
+					e.target.parentElement.style.display = 'none';
+				}
+			})
 		</script>
 	</body>
 </html>

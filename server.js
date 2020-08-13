@@ -125,14 +125,14 @@ app.get('/room', (req, res) => {
   }
 });
 
-// route to chat
+// route to chat with query
 app.get('/chat', (req, res) => {
   // console.log(req.params);
   // console.log(req.query.room)
   if (req.session.user) {
-    const room = req.query.room 
-    if (room) {
-      res.render('chat', {username: req.session.user, room});
+    const chatRoom  = req.query.room 
+    if (chatRoom ) {
+      res.render('chat', {username: req.session.user, chatRoom });
     } else {
       res.redirect('/room')
     }
@@ -140,6 +140,19 @@ app.get('/chat', (req, res) => {
     res.redirect('/');
   }
 });
+// route to chat with params
+app.get('/chat/:room', (req, res) => {
+  if (req.session.user) {
+    const chatRoom = req.params.room 
+    if (chatRoom ) {
+      res.render('chat', {username: req.session.user, chatRoom});
+    } else {
+      res.redirect('/room')
+    }
+  } else {
+    res.redirect('/');
+  }
+})
 
 /* ************************************************************ PORT ******************************************************* */
 

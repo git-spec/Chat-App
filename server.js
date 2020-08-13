@@ -98,6 +98,11 @@ app.get('/register', (req, res) => {
   res.render('main');
 });
 
+// route to room
+app.get('/room', (req, res) => {
+  res.render('room', {username});
+});
+
 // route to chat
 app.get('/chat', (req, res) => {
   res.render('chat', {username});

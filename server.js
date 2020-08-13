@@ -93,6 +93,11 @@ app.post('/', (req, res) => {
   res.json(1);
 });
 
+// route to main
+app.get('/register', (req, res) => {
+  res.render('main');
+});
+
 // route to chat
 app.get('/chat', (req, res) => {
   res.render('chat', {username});

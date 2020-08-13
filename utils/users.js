@@ -1,4 +1,28 @@
+/* ************************************************************ SETUP ******************************************************* */
+// modules
+const passwordHash = require('password-hash');
+
+const runQuery = require('./connection.js');
+
 const users = [];
+
+// Register user
+function registerUser(firstname, lastname, username, email, password) {
+  return new Promise((resolve, reject) => {
+    runQuery(`
+      INSERT INTO users (firstname, lastname, username, email, password)
+      VALUES ('${firstname}', '${lastname}', '${username}', '${email}', '${passwordHash.generate(password)}')
+    `).then(() => {
+      resolve();
+    }).catch(err => {
+      if (err.errno === 1062) {
+        reject("exists");
+      } else {
+        reject(err);
+      }
+    })
+  })
+}
 
 // Join user to chat
 function userJoin(id, username, room) {
@@ -29,5 +53,6 @@ module.exports = {
   userJoin,
   getCurrentUser,
   userLeave,
-  getRoomUsers
+  getRoomUsers,
+  registerUser
 };

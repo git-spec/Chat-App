@@ -26,7 +26,7 @@ function connection() {
                 port: 3306,
                 user: 'admin',
                 password: '12345678',
-                database: 'chat'
+                database: 'chatapp'
             });
             ctn.connect(error => {
                 if(error) {
@@ -54,3 +54,5 @@ function runQuery(queryString) {
         });
     });
 };
+
+module.exports = runQuery;

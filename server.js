@@ -14,6 +14,7 @@ const {
 
 // session
 const session = require('express-session');
+const users = require('./utils/users');
 app.use(session({
   secret: 'chat',
   cookie: {}
@@ -94,10 +95,25 @@ app.get('/', (req, res) => {
 
 // handle with register data
 app.post('/', (req, res) => {
-  // console.log(req.body);
-  // let username = req.body.username;
-  req.session.user = req.body.username;
-  res.json(1);
+  console.log(req.body);
+  const firstname = req.body.firstname;
+  const lastname = req.body.lastname;
+  const username = req.body.username;
+  const email = req.body.email;
+  const password = req.body.password;
+  const repassword = req.body.repassword;
+  if (firstname && lastname && username && email && password && password === repassword) {
+    users.registerUser(firstname, lastname, username, email, password).then(() => {
+      req.session.user = username;
+      res.json(1);
+    }).catch(err => {
+      res.json(2);
+    });
+  } else if (username && password) {
+    // users.getUser
+  } else {
+    res.json(3);
+  };
 });
 
 // route to room

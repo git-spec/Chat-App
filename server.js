@@ -102,7 +102,7 @@ app.get('/', (req, res) => {
   res.render('main');
 });
 
-// handle with register data
+// handle with register or login data
 app.post('/', (req, res) => {
   console.log(req.body);
   const firstname = req.body.firstname;
@@ -111,17 +111,58 @@ app.post('/', (req, res) => {
   const email = req.body.email;
   const password = req.body.password;
   const repassword = req.body.repassword;
+  // 1 registration or login successful
+  // 2 user already exists
+  // 3 user not found
+  // 4 server error
+  // 5 missing entries
   if (firstname && lastname && username && email && password && password === repassword) {
     users.registerUser(firstname, lastname, username, email, password).then(() => {
-      req.session.user = username;
-      res.json(1);
+      users.getUser(username, password).then(user => {
+        console.log(user);
+        req.session.user = user.username;
+        req.session.userID = user.ID;
+        console.log(req.session);
+        // login successful
+        res.json(1);
+      }).catch(err => {
+        if (err === 3) {
+          // user not found
+          res.json(3);
+        } else {
+          // server error
+          res.json(4);
+        }
+      });  
     }).catch(err => {
-      res.json(2);
+      if (err === "exists") {
+        // user already exists
+        res.json(2);
+      } else {
+        // server error
+        res.json(4);
+      }
     });
   } else if (username && password) {
-    // users.getUser
+    users.getUser(username, password).then(user => {
+      console.log(user);
+      req.session.user = user.username;
+      req.session.userID = user.ID;
+      console.log(req.session);
+      // login successful
+      res.json(1);
+    }).catch(err => {
+      if (err === 3) {
+        // user not found
+        res.json(3);
+      } else {
+        // server error
+        res.json(4);
+      }
+    });
   } else {
-    res.json(3);
+    // missing entries
+    res.json(5);
   };
 });
 
@@ -148,7 +189,7 @@ app.get('/chat', (req, res) => {
   // console.log(req.query.room)
   if (req.session.user) {
     const chatRoom  = req.query.room 
-    if (chatRoom ) {
+    if (chatRoom) {
       res.render('chat', {username: req.session.user, chatRoom });
     } else {
       res.redirect('/room')

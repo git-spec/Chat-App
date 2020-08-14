@@ -24,7 +24,7 @@ function connection() {
                 // multipleStatements: true,
                 host: 'localhost',
                 port: 3306,
-                user: 'admin',
+                user: 'phpmyadmin',
                 password: '12345678',
                 database: 'chatapp'
             });

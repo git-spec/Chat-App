@@ -1,7 +1,7 @@
 const moment = require('moment');
 const runQuery = require('./connection');
 
-function insertMessage(username, message, userID, roomID) {
+function insertMessage(message, userID, roomID) {
   return new Promise((resolve, reject) => {
     runQuery(`
               INSERT INTO messages (message, message_time, userID, roomID)

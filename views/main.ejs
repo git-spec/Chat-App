@@ -79,13 +79,13 @@
 									alert("User not found or password is not correct");
 									break;
 								case 4:
-									alert("Server error");
+									alert("Server error1");
 									break;
 								case 5:
 									alert("Missing entries");
 									break;
 								default:
-									alert("Server error");
+									alert("Server error2");
 									break;
 							}
 						}).catch(err => {
@@ -141,27 +141,27 @@
 						username: userName.value.trim(),
 						password: password.value
 					};
-					request('/' , USER);
+					request('/', USER);
 				} else {
 					alert("Not all inputs are filled");
 				};
 			});
 			// switch from login to register
 			document.querySelector('#login > a').addEventListener('click', e => {
-				e.preventDefault()
+				e.preventDefault();
 				if(document.querySelector('#register').style.display === 'none') {
 					document.querySelector('#register').style.display = 'block';
 					e.target.parentElement.style.display = 'none';
-				}
-			})
+				};
+			});
 			// switch from register to login
 			document.querySelector('#register > a').addEventListener('click', e => {
-				e.preventDefault()
+				e.preventDefault();
 				if(document.querySelector('#login').style.display === 'none') {
 					document.querySelector('#login').style.display = 'block';
 					e.target.parentElement.style.display = 'none';
-				}
-			})
+				};
+			});
 		</script>
 	</body>
 </html>

@@ -132,7 +132,7 @@ app.post('/', (req, res) => {
         } else {
           // server error
           res.json(4);
-        }
+        };
       });  
     }).catch(err => {
       if (err === "exists") {
@@ -141,7 +141,7 @@ app.post('/', (req, res) => {
       } else {
         // server error
         res.json(4);
-      }
+      };
     });
   } else if (username && password) {
     users.getUser(username, password).then(user => {
@@ -158,7 +158,7 @@ app.post('/', (req, res) => {
       } else {
         // server error
         res.json(4);
-      }
+      };
     });
   } else {
     // missing entries

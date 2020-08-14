@@ -141,27 +141,27 @@
 						username: userName.value.trim(),
 						password: password.value
 					};
-					request('/' , USER);
+					request('/', USER);
 				} else {
 					alert("Not all inputs are filled");
 				};
 			});
 			// switch from login to register
 			document.querySelector('#login > a').addEventListener('click', e => {
-				e.preventDefault()
+				e.preventDefault();
 				if(document.querySelector('#register').style.display === 'none') {
 					document.querySelector('#register').style.display = 'block';
 					e.target.parentElement.style.display = 'none';
-				}
-			})
+				};
+			});
 			// switch from register to login
 			document.querySelector('#register > a').addEventListener('click', e => {
-				e.preventDefault()
+				e.preventDefault();
 				if(document.querySelector('#login').style.display === 'none') {
 					document.querySelector('#login').style.display = 'block';
 					e.target.parentElement.style.display = 'none';
-				}
-			})
+				};
+			});
 		</script>
 	</body>
 </html>

@@ -35,10 +35,6 @@ function getUser(username, password) {
         reject(3);
       } else {
         if (passwordHash.verify(password, users[0].password)) {
-          // add property _id to user
-          // users[0]._id = users[0].id; 
-                    // users[0]._id = users[0].id; 
-
           // password correct
           resolve(users[0]);
         } else {

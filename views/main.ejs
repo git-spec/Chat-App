@@ -58,19 +58,22 @@
 		</div>
 		<script>
 			// post request to server
-			function request(user) {
-				return fetch('/', {
+			function request(url, data) {
+				return new Promise((resolve, reject) => {
+					fetch(url, {
 					method: 'POST',
 					headers: {
 						'Content-Type': 'application/json'
 					},
-					body: JSON.stringify(user)
+					body: JSON.stringify(data)
 				}).then(response => {
 					if(response.status === 200) {
 						response.json().then(data => {
 							if (data === 1) {
-								window.location = "/room";
-								resolve();
+								// window.location = "/room";
+								 resolve();
+							} else {
+								reject()
 							}
 						}).catch(err => {
 							reject(err.message);
@@ -81,6 +84,8 @@
 				}).catch(err => {
 					reject(err.message);
 				});
+				})
+				
 			};
 			// register user
 			document.querySelector('#register-btn').addEventListener('click', e => {
@@ -104,7 +109,11 @@
 							password: password.value,
 							repassword: repassword.value
 						};
-						request(USER);
+						request('/',USER).then(() => {
+							window.location = "/room"
+						}).catch(error => {
+							console.log('register error')
+						})
 					} else {
 						console.log("Passwords do not match");
 					}
@@ -125,7 +134,11 @@
 						username: userName.value.trim(),
 						password: password.value
 					};
-					request(USER);
+					request('/' ,USER).then(() => {
+						window.location = '/room'
+					}).catch(error => {
+						console.log('login error')
+					});
 				} else {
 					console.log("Not all inputs are filled");
 				};

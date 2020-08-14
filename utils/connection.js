@@ -21,7 +21,7 @@ function connection() {
             };
         } else {
             ctn = mySql.createConnection({
-                multipleStatements: true,
+                // multipleStatements: true,
                 host: 'localhost',
                 port: 3306,
                 user: 'admin',

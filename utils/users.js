@@ -28,18 +28,18 @@ function registerUser(firstname, lastname, username, email, password) {
 // Get user for login
 function getUser(username, password) {
   return new Promise((resolve, reject) => {
-    runQuery(`SELECT * FROM users WHERE username LIKE '${username}'`).then(users => {
-      // console.log(users);
-      if (users.length === 0) {
+    runQuery(`SELECT * FROM users WHERE users.username LIKE '${username}'`).then(user => {
+      // console.log(user);
+      if (user.length === 0) {
         // user not found
         reject(3);
       } else {
-        if (passwordHash.verify(password, users[0].password)) {
+        if (passwordHash.verify(password, user[0].password)) {
           // password correct
-          resolve(users[0]);
+          resolve(user[0]);
         } else {
           // password not correct
-          reject(3); 
+          reject(3);
         }
       };
     }).catch(err => {

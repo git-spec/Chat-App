@@ -10,6 +10,8 @@ const {
   formatMessage
 } = require('./utils/messages');
 const {
+  registerUser,
+  getUser,
   userJoin,
   getCurrentUser,
   userLeave,
@@ -21,7 +23,6 @@ const {
 
 // session
 const session = require('express-session');
-const users = require('./utils/users');
 app.use(session({
   secret: 'chat',
   cookie: {}
@@ -117,8 +118,8 @@ app.post('/', (req, res) => {
   // 4 server error
   // 5 missing entries
   if (firstname && lastname && username && email && password && password === repassword) {
-    users.registerUser(firstname, lastname, username, email, password).then(() => {
-      users.getUser(username, password).then(user => {
+    registerUser(firstname, lastname, username, email, password).then(() => {
+      getUser(username, password).then(user => {
         console.log(user);
         req.session.user = user.username;
         req.session.userID = user.ID;
@@ -144,7 +145,7 @@ app.post('/', (req, res) => {
       };
     });
   } else if (username && password) {
-    users.getUser(username, password).then(user => {
+    getUser(username, password).then(user => {
       console.log(user);
       req.session.user = user.username;
       req.session.userID = user.ID;
@@ -172,9 +173,11 @@ app.get('/room', (req, res) => {
   if (req.session.user) {
     // get rooms from db
     getRooms().then(rooms => {
-      const roomsArr = Object.values(rooms)
+      console.log(rooms);
+      // const roomsArr = Object.entries(rooms);
+      // console.log(roomsArr);
       // send roomnames to page room
-      res.render('room', {roomsArr});
+      res.render('room', {rooms});
     }).catch(err => {
       res.redirect('/');
     })

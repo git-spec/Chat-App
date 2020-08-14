@@ -4,13 +4,20 @@ const http = require('http');
 const express = require('express');
 const app = express();
 const socketio = require('socket.io');
-const formatMessage = require('./utils/messages');
+const {
+  insertMessage,
+  getMessage,
+  formatMessage
+} = require('./utils/messages');
 const {
   userJoin,
   getCurrentUser,
   userLeave,
   getRoomUsers
 } = require('./utils/users');
+const {
+  getRooms
+} = require('./utils/rooms');
 
 // session
 const session = require('express-session');
@@ -64,7 +71,9 @@ io.on('connection', socket => {
   // Listen for chatMessage
   socket.on('chatMessage', msg => {
     const user = getCurrentUser(socket.id);
-    io.to(user.room).emit('message', formatMessage(user.username, msg));
+    console.log(user);
+
+    io.to(user.room).emit('message', insertMessage(user, msg, this.socket.session.userID, this.socket.session.roomID));
   });
 
   // Runs when client disconnects
@@ -118,8 +127,16 @@ app.post('/', (req, res) => {
 
 // route to room
 app.get('/room', (req, res) => {
+  // check if valid user
   if (req.session.user) {
-    res.render('room');
+    // get rooms from db
+    getRooms().then(rooms => {
+      const roomsArr = Object.values(rooms)
+      // send roomnames to page room
+      res.render('room', {roomsArr});
+    }).catch(err => {
+      res.redirect('/');
+    })
   } else {
     res.redirect('/');
   }

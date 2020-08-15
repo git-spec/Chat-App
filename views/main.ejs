@@ -135,6 +135,8 @@
 				const userName = document.querySelector('#log-username');
 				const password = document.querySelector('#log-password');
 
+				sessionStorage.setItem('username', userName.value)
+
 				if(userName.value.trim() && password.value) {
 					// user object with input data
 					const USER = {

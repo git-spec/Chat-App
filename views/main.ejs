@@ -12,13 +12,12 @@
 			crossorigin="anonymous"
 		/>
 		<!-- CSS -->
-		<link rel="stylesheet" href="css/style.css" />
+		<link rel="stylesheet" href="/css/style.css" />
 		<title>ChatApp</title>
 	</head>
 	<body>
 		<div class="join-container">
 			<header class="join-header">
-				<!-- <h1><i class="fas fa-smile"></i> ChatApp</h1> -->
 				<h1>ChatApp</h1>
 			</header>
 			<main class="join-main">
@@ -51,7 +50,7 @@
 							<label for="password">Password</label>
 							<input type="password" name="password" id="log-password" placeholder="Enter Password" required />
 						</div>
-						<button type="submit" class="btn" id="login-btn">Join Chat</button>
+						<button type="submit" class="btn" id="login-btn">Select Room</button>
 					</fieldset>
 				</form>
 			</main>
@@ -79,13 +78,13 @@
 									alert("User not found or password is not correct");
 									break;
 								case 4:
-									alert("Server error1");
+									alert("Server error");
 									break;
 								case 5:
 									alert("Missing entries");
 									break;
 								default:
-									alert("Server error2");
+									alert("Server error");
 									break;
 							}
 						}).catch(err => {
@@ -135,7 +134,7 @@
 				const userName = document.querySelector('#log-username');
 				const password = document.querySelector('#log-password');
 
-				sessionStorage.setItem('username', userName.value)
+				sessionStorage.setItem('username', userName.value);
 
 				if(userName.value.trim() && password.value) {
 					// user object with input data

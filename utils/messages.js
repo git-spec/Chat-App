@@ -7,9 +7,9 @@ function insertMessage(message, userID, roomID) {
               INSERT INTO messages (message, userID, roomID)
               Values ('${message}', '${userID}', '${roomID}')
     `).then(() => {
-      resolve()
+      resolve();
     }).catch(err => {
-      reject(err)
+      reject(err);
     });
   });
 };
@@ -17,9 +17,9 @@ function insertMessage(message, userID, roomID) {
 function getMessage(userID) {
   return new Promise((resolve, reject) => {
     runQuery('SELECT * FROM messages').then(message => {
-      resolve(message)
+      resolve(message);
     }).catch(err => {
-      reject(err)
+      reject(err);
     });
   });
 };

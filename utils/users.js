@@ -29,7 +29,6 @@ function registerUser(firstname, lastname, username, email, password) {
 function getUser(username, password) {
   return new Promise((resolve, reject) => {
     runQuery(`SELECT * FROM users WHERE users.username LIKE '${username}'`).then(user => {
-      // console.log(user);
       if (user.length === 0) {
         // user not found
         reject(3);
@@ -53,9 +52,9 @@ function getUser(username, password) {
 function setUsersRoom(userID, roomID) {
   return new Promise((reject, resolve) => {
     runQuery(`INSERT INTO users_room (userID, roomID) VALUES ('${userID}', '${roomID}')`).then(() => {
-      resolve()
+      resolve();
     }).catch(err => {
-      reject(err)
+      reject(err);
     });
   });
 };
@@ -77,7 +76,7 @@ function userLeave(id) {
   const index = users.findIndex(user => user.id === id);
   if (index !== -1) {
     return users.splice(index, 1)[0];
-  }
+  };
 };
 
 // Get room users

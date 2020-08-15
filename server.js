@@ -41,13 +41,13 @@ io.use(sharedsession(session, {
 // set static folder
 app.use(express.static(path.join(__dirname, 'public')));
 // set body-parser
-app.use(express.urlencoded({extended: false}))
+app.use(express.urlencoded({extended: false}));
 // parses incoming requests with json payloads to an object
 app.use(express.json());
 
 // set view engine
-app.set('view engine', 'ejs')
-app.set('views', __dirname + '/views')
+app.set('view engine', 'ejs');
+app.set('views', __dirname + '/views');
 
 const botName = 'ChatApp Bot';
 
@@ -88,11 +88,10 @@ io.on('connection', socket => {
 
     getRoom(user.room).then(element => {
       console.log(element[0].ID);
-
-      insertMessage(msg, socket.handshake.session.userID, element[0].ID)
+      insertMessage(msg, socket.handshake.session.userID, element[0].ID);
     }).catch(err => {
       console.log(err.message);
-    })
+    });
     // insertMessage(msg, this.socket.session.userID, this.socket.session.roomID)
     io.to(user.room).emit('message', formatMessage(user.username, msg));
   });
@@ -120,7 +119,11 @@ io.on('connection', socket => {
 
 // route to main
 app.get('/', (req, res) => {
-  res.render('main');
+  if (req.session.user) {
+    res.redirect('/room');
+  } else {
+    res.render('main');
+  }
 });
 
 // handle with register or login data
@@ -208,7 +211,7 @@ app.get('/chat/:room&:id', (req, res) => {
       // render page chat
       res.render('chat', {username: req.session.user, chatRoom});
     } else {
-      res.redirect('/room')
+      res.redirect('/room');
     };
   } else {
     res.redirect('/');

@@ -23,7 +23,7 @@
 					<label for="room">Room</label>
 					<select name="room" id="room">
 						<%for (let i = 0; i < rooms.length; i++){%>
-						<option value="<%= rooms[i].room %>"><%= rooms[i].room %></option>
+						<option value="<%= rooms[i].room %>" idx="<%= rooms[i].ID %>"><%= rooms[i].room %></option>
 						<%}%>
 					</select>
 				</div>
@@ -34,7 +34,8 @@
             document.querySelector('.btn').addEventListener('click', e => {
                 e.preventDefault();
 				const roomSelect = document.querySelector('#room');
-				window.location = '/chat/' + roomSelect.options[roomSelect.selectedIndex].value;
+				console.log(roomSelect.options[roomSelect.selectedIndex].getAttribute('idx'));
+				window.location = '/chat/' + roomSelect.options[roomSelect.selectedIndex].value + '&' + roomSelect.options[roomSelect.selectedIndex].getAttribute('idx');
             });
         </script>
 	</body>

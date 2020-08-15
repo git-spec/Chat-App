@@ -15,24 +15,33 @@ const {
   userJoin,
   getCurrentUser,
   userLeave,
-  getRoomUsers
+  getRoomUsers,
+  setUsersRoom
 } = require('./utils/users');
 const {
-  getRooms
+  getRooms,
+  getRoom
 } = require('./utils/rooms');
 
-// session
-const session = require('express-session');
-app.use(session({
-  secret: 'chat',
-  cookie: {}
-}));
-
+// socketio server
 const server = http.createServer(app);
 const io = socketio(server);
 
-// Set static folder
+// session
+const session = require('express-session')({
+  secret: "chat",
+  resave: true,
+  saveUninitialized: true
+});
+var sharedsession = require("express-socket.io-session");
+app.use(session);
+io.use(sharedsession(session, {
+  autoSave:true
+}));
+// set static folder
 app.use(express.static(path.join(__dirname, 'public')));
+// set body-parser
+app.use(express.urlencoded({extended: false}))
 // parses incoming requests with json payloads to an object
 app.use(express.json());
 
@@ -47,8 +56,9 @@ const botName = 'ChatApp Bot';
 // Run when client connects
 io.on('connection', socket => {
   socket.on('joinRoom', ({ username, room }) => {
+    // create user object
     const user = userJoin(socket.id, username, room);
-
+    // subscribe to a given channel
     socket.join(user.room);
 
     // Welcome current user
@@ -72,7 +82,17 @@ io.on('connection', socket => {
   // Listen for chatMessage
   socket.on('chatMessage', msg => {
     const user = getCurrentUser(socket.id);
-    console.log(user);
+    console.log(user.room);
+    // console.log(socket.handshake.session.room);
+    console.log(socket.handshake.session.userID);
+
+    getRoom(user.room).then(element => {
+      console.log(element[0].ID);
+
+      insertMessage(msg, socket.handshake.session.userID, element[0].ID)
+    }).catch(err => {
+      console.log(err.message);
+    })
     // insertMessage(msg, this.socket.session.userID, this.socket.session.roomID)
     io.to(user.room).emit('message', formatMessage(user.username, msg));
   });
@@ -105,7 +125,6 @@ app.get('/', (req, res) => {
 
 // handle with register or login data
 app.post('/', (req, res) => {
-  console.log(req.body);
   const firstname = req.body.firstname;
   const lastname = req.body.lastname;
   const username = req.body.username;
@@ -120,7 +139,6 @@ app.post('/', (req, res) => {
   if (firstname && lastname && username && email && password && password === repassword) {
     registerUser(firstname, lastname, username, email, password).then(() => {
       getUser(username, password).then(user => {
-        console.log(user);
         req.session.user = user.username;
         req.session.userID = user.ID;
         console.log(req.session);
@@ -146,10 +164,8 @@ app.post('/', (req, res) => {
     });
   } else if (username && password) {
     getUser(username, password).then(user => {
-      console.log(user);
       req.session.user = user.username;
       req.session.userID = user.ID;
-      console.log(req.session);
       // login successful
       res.json(1);
     }).catch(err => {
@@ -173,10 +189,6 @@ app.get('/room', (req, res) => {
   if (req.session.user) {
     // get rooms from db
     getRooms().then(rooms => {
-      console.log(rooms);
-      // const roomsArr = Object.entries(rooms);
-      // console.log(roomsArr);
-      // send roomnames to page room
       res.render('room', {rooms});
     }).catch(err => {
       res.redirect('/');
@@ -186,34 +198,22 @@ app.get('/room', (req, res) => {
   }
 });
 
-// route to chat with query
-app.get('/chat', (req, res) => {
-  // console.log(req.params);
-  // console.log(req.query.room)
-  if (req.session.user) {
-    const chatRoom  = req.query.room 
-    if (chatRoom) {
-      res.render('chat', {username: req.session.user, chatRoom });
-    } else {
-      res.redirect('/room')
-    }
-  } else {
-    res.redirect('/');
-  }
-});
 // route to chat with params
-app.get('/chat/:room', (req, res) => {
+app.get('/chat/:room&:id', (req, res) => {
   if (req.session.user) {
-    const chatRoom = req.params.room 
+    const chatRoom = req.params.room;
     if (chatRoom ) {
+      // combine userID and roomID
+      setUsersRoom(req.session.userID, req.params.id).then(() => {}).catch(err => {});
+      // render page chat
       res.render('chat', {username: req.session.user, chatRoom});
     } else {
       res.redirect('/room')
-    }
+    };
   } else {
     res.redirect('/');
-  }
-})
+  };
+});
 
 /* ************************************************************ PORT ******************************************************* */
 

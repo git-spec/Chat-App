@@ -4,8 +4,8 @@ const runQuery = require('./connection');
 function insertMessage(message, userID, roomID) {
   return new Promise((resolve, reject) => {
     runQuery(`
-              INSERT INTO messages (message, message_time, userID, roomID)
-              Values ('${message}', '${new Date()}','${userID}', '${roomID}')
+              INSERT INTO messages (message, userID, roomID)
+              Values ('${message}', '${userID}', '${roomID}')
     `).then(() => {
       resolve()
     }).catch(err => {

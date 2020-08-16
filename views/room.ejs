@@ -17,6 +17,7 @@
 		<div class="join-container">
 			<header class="join-header">
 				<h1>ChatApp</h1>
+				<a href="/logout" class="btn">Log Out</a>
 			</header>
 			<main class="join-main">
 				<div class="form-control">
@@ -27,11 +28,11 @@
 						<%}%>
 					</select>
 				</div>
-				<button type="submit" class="btn">Join Chat</button>
+				<button type="submit" class="btn" id="joinChatBtn">Join Chat</button>
 			</main>
         </div>
         <script>
-            document.querySelector('.btn').addEventListener('click', e => {
+            document.querySelector('#joinChatBtn').addEventListener('click', e => {
 				e.preventDefault();
 				// open chat of selected room
 				const roomSelect = document.querySelector('#room');

@@ -5,6 +5,8 @@ const moment = require('moment');
 const express = require('express');
 const app = express();
 const socketio = require('socket.io');
+
+// utils
 const {
   insertMessage,
   getMessage,
@@ -14,11 +16,12 @@ const {
 const {
   registerUser,
   getUser,
+  joinUsersRoom,
+  leaveUsersRoom,
   userJoin,
   getCurrentUser,
   userLeave,
-  getRoomUsers,
-  setUsersRoom
+  getRoomUsers
 } = require('./utils/users');
 const {
   getRooms,
@@ -55,7 +58,7 @@ const botName = 'ChatApp Bot';
 
 /* ************************************************************ ROUTES ******************************************************* */
 
-// Run when client connects
+// run when client connects
 io.on('connection', socket => {
   socket.on('joinRoom', ({ username, room }) => {
     // create user object
@@ -63,10 +66,10 @@ io.on('connection', socket => {
     // subscribe to a given channel
     socket.join(user.room);
 
-    // Welcome current user
+    // welcome current user
     socket.emit('message', formatMessage(botName, 'Welcome to ChatApp!'));
 
-    // Broadcast when a user connects
+    // broadcast when a user connects
     socket.broadcast
       .to(user.room)
       .emit(
@@ -74,31 +77,46 @@ io.on('connection', socket => {
         formatMessage(botName, `${user.username} has joined the chat`)
       );
 
-    // Send users and room info
+    // send users and room info
     io.to(user.room).emit('roomUsers', {
       room: user.room,
       users: getRoomUsers(user.room)
     });
   });
 
-  // Listen for chatMessage
+  // listen for chatMessage
   socket.on('chatMessage', msg => {
     const user = getCurrentUser(socket.id);
-    console.log(user);
-    console.log(socket.handshake.session.userID);
-
-    getRoom(user.room).then(element => {
-      element.id
-      insertMessage(msg, socket.handshake.session.userID, element[0].ID);
+    const userID = socket.handshake.session.userID;
+    // saves message into database
+    getRoom(user.room).then(roomElement => {
+      const roomID = roomElement[0].ID;
+      insertMessage(msg, userID, roomID).then(() => {
+        // ???
+      }).catch(err => {
+        console.log(err.message);
+      });
     }).catch(err => {
       console.log(err.message);
     });
     io.to(user.room).emit('message', formatMessage(user.username, msg));
   });
 
-  // Runs when client disconnects
+  // runs when client disconnects
   socket.on('disconnect', () => {
     const user = userLeave(socket.id);
+    const userID = socket.handshake.session.userID;
+    // deletes user & room correlation from database when user lefts the room
+    getRoom(user.room).then(roomElement => {
+      const roomID = roomElement[0].ID;
+      leaveUsersRoom(userID, roomID).then(() => {
+        // ???
+      }).catch(err => {
+        console.log(err.message);
+      });
+    }).catch(err => {
+      console.log(err.message);
+    });
 
     if (user) {
       io.to(user.room).emit(
@@ -106,12 +124,12 @@ io.on('connection', socket => {
         formatMessage(botName, `${user.username} has left the chat`)
       );
 
-      // Send users and room info
+      // send users and room info
       io.to(user.room).emit('roomUsers', {
         room: user.room,
         users: getRoomUsers(user.room)
       });
-    }
+    };
 
   });
 
@@ -144,7 +162,7 @@ app.post('/', (req, res) => {
       getUser(username, password).then(user => {
         req.session.user = user.username;
         req.session.userID = user.ID;
-        console.log(req.session);
+        // console.log(req.session);
         // login successful
         res.json(1);
       }).catch(err => {
@@ -201,16 +219,15 @@ app.get('/room', (req, res) => {
   }
 });
 
-// route to chat with params
+// route to chat
 app.get('/chat/:room/:id', (req, res) => {
   if (req.session.user) {
     const chatRoom = req.params.room;
     const roomId = req.params.id;
-    if (chatRoom ) {
+    if (chatRoom) {
       // combine userID and roomID
-      //setUsersRoom(req.session.userID, req.params.id).then(() => {}).catch(err => {});
       // render page chat
-      setUsersRoom(req.session.userID, roomId).then(() => {
+      joinUsersRoom(req.session.userID, roomId).then(() => {
         getMessages(chatRoom).then(messages => {
           const msgs = []
           messages.forEach(msg => {
@@ -227,14 +244,19 @@ app.get('/chat/:room/:id', (req, res) => {
       }).catch(err => {
         console.log(err);
       });
-      
-      
     } else {
       res.redirect('/room');
     };
   } else {
     res.redirect('/');
   };
+});
+
+// route to logout
+app.get('/logout', (req, res) => {
+  // destroys the session from user & logs him out
+  req.session.destroy();
+  res.redirect('/');
 });
 
 /* ************************************************************ PORT ******************************************************* */

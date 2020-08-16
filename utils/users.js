@@ -49,9 +49,20 @@ function getUser(username, password) {
 };
 
 // connect user with room
-function setUsersRoom(userID, roomID) {
-  return new Promise(( resolve, reject) => {
+function joinUsersRoom(userID, roomID) {
+  return new Promise((resolve, reject) => {
     runQuery(`INSERT INTO users_room (userID, roomID) VALUES (${userID}, ${roomID})`).then(() => {
+      resolve();
+    }).catch(err => {
+      reject(err);
+    });
+  });
+};
+
+// user leaves room
+function leaveUsersRoom(userID, roomID) {
+  return new Promise((resolve, reject) => {
+    runQuery(`DELETE FROM users_room WHERE roomID=${roomID} AND userID=${userID}`).then(() => {
       resolve();
     }).catch(err => {
       reject(err);
@@ -88,9 +99,10 @@ function getRoomUsers(room) {
 module.exports = {
   registerUser,
   getUser,
+  joinUsersRoom,
+  leaveUsersRoom,
   userJoin,
   getCurrentUser,
   userLeave,
-  getRoomUsers,
-  setUsersRoom
+  getRoomUsers
 };

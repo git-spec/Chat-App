@@ -17,7 +17,7 @@
 		<div class="join-container">
 			<header class="join-header">
 				<h1>ChatApp</h1>
-				<a href="/logout" class="btn">Log Out</a>
+				<button class="btn"><i class="fas fa-times"></i></button>
 			</header>
 			<main class="join-main">
 				<div class="form-control">
@@ -28,16 +28,22 @@
 						<%}%>
 					</select>
 				</div>
-				<button type="submit" class="btn" id="joinChatBtn">Join Chat</button>
+				<button type="submit" class="btn">Join Chat</button>
 			</main>
         </div>
         <script>
-            document.querySelector('#joinChatBtn').addEventListener('click', e => {
+			// join room
+            document.querySelector('main > .btn').addEventListener('click', e => {
 				e.preventDefault();
 				// open chat of selected room
 				const roomSelect = document.querySelector('#room');
 				window.location = '/chat/' + roomSelect.options[roomSelect.selectedIndex].value + '/' + roomSelect.options[roomSelect.selectedIndex].getAttribute('idx');
-            });
+			});
+			// logout
+			document.querySelector('header > .btn').addEventListener('click', e => {
+				e.preventDefault();
+				window.location = '/logout';
+			});
         </script>
 	</body>
 </html>

@@ -14,18 +14,14 @@ function insertMessage(message, userID, roomID) {
   });
 };
 
-function getMessage(userID) {
-  return new Promise((resolve, reject) => {
-    runQuery('SELECT * FROM messages').then(message => {
-      resolve(message);
-    }).catch(err => {
-      reject(err);
-    });
-  });
-};
 function getMessages(roomName) {
   return new Promise((resolve, reject) => {
-    runQuery(`SELECT messages.*, users.username as username  FROM messages INNER JOIN rooms ON messages.roomID = rooms.ID INNER JOIN users ON messages.userID = users.ID WHERE rooms.room LIKE '${roomName}' `).then(messages => {
+    runQuery(`
+              SELECT messages.*, users.username as username FROM messages
+              INNER JOIN rooms ON messages.roomID = rooms.ID
+              INNER JOIN users ON messages.userID = users.ID
+              WHERE rooms.room LIKE '${roomName}'
+    `).then(messages => {
       messages.forEach(message => {
         message.message =  message.message.toString()
       })
@@ -36,6 +32,15 @@ function getMessages(roomName) {
   });
 };
 
+function getMessage(userID) {
+  return new Promise((resolve, reject) => {
+    runQuery('SELECT * FROM messages').then(message => {
+      resolve(message);
+    }).catch(err => {
+      reject(err);
+    });
+  });
+};
 
  function formatMessage(username, text) {
     return {

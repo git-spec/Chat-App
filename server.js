@@ -1,13 +1,15 @@
 /* ************************************************************ SETUP ******************************************************* */
 const path = require('path');
 const http = require('http');
+const moment = require('moment');
 const express = require('express');
 const app = express();
 const socketio = require('socket.io');
 const {
   insertMessage,
   getMessage,
-  formatMessage
+  formatMessage,
+  getMessages
 } = require('./utils/messages');
 const {
   registerUser,
@@ -32,12 +34,12 @@ const session = require('express-session')({
   secret: "chat",
   resave: true,
   saveUninitialized: true
-});
-var sharedsession = require("express-socket.io-session");
+});var sharedsession = require("express-socket.io-session");
 app.use(session);
 io.use(sharedsession(session, {
   autoSave:true
 }));
+
 // set static folder
 app.use(express.static(path.join(__dirname, 'public')));
 // set body-parser
@@ -82,17 +84,15 @@ io.on('connection', socket => {
   // Listen for chatMessage
   socket.on('chatMessage', msg => {
     const user = getCurrentUser(socket.id);
-    console.log(user.room);
-    // console.log(socket.handshake.session.room);
+    console.log(user);
     console.log(socket.handshake.session.userID);
 
     getRoom(user.room).then(element => {
-      console.log(element[0].ID);
+      element.id
       insertMessage(msg, socket.handshake.session.userID, element[0].ID);
     }).catch(err => {
       console.log(err.message);
     });
-    // insertMessage(msg, this.socket.session.userID, this.socket.session.roomID)
     io.to(user.room).emit('message', formatMessage(user.username, msg));
   });
 
@@ -202,14 +202,33 @@ app.get('/room', (req, res) => {
 });
 
 // route to chat with params
-app.get('/chat/:room&:id', (req, res) => {
+app.get('/chat/:room/:id', (req, res) => {
   if (req.session.user) {
     const chatRoom = req.params.room;
+    const roomId = req.params.id;
     if (chatRoom ) {
       // combine userID and roomID
-      setUsersRoom(req.session.userID, req.params.id).then(() => {}).catch(err => {});
+      //setUsersRoom(req.session.userID, req.params.id).then(() => {}).catch(err => {});
       // render page chat
-      res.render('chat', {username: req.session.user, chatRoom});
+      setUsersRoom(req.session.userID, roomId).then(() => {
+        getMessages(chatRoom).then(messages => {
+          const msgs = []
+          messages.forEach(msg => {
+            msgs.push({
+              username: msg.username,
+              text: msg.message,
+              time: moment(msg.message_time).format('H:mm')
+            })
+          })
+          res.render('chat', {username: req.session.user, chatRoom, oldMessages: JSON.stringify(msgs)});
+        }).catch(error => {
+          res.render('chat', {username: req.session.user, chatRoom, oldMessages: JSON.stringify([])});
+        })
+      }).catch(err => {
+        console.log(err);
+      });
+      
+      
     } else {
       res.redirect('/room');
     };

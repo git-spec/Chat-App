@@ -63,7 +63,7 @@ function userJoinsRoom(userID, roomID) {
 function userLeavesRoom(userID, roomID) {
   return new Promise((resolve, reject) => {
     // runQuery(`INSERT INTO users_room (userID, roomID) VALUES ('${userID}', '${roomID}')`).then(() => {
-    runQuery(`DELETE FROM users_room WHERE roomID=${userID} AND ${roomID}`).then(() => {
+    runQuery(`DELETE FROM users_room WHERE userID=${userID} AND roomID=${roomID}`).then(() => {
       resolve();
     }).catch(err => {
       reject(err);
@@ -100,9 +100,10 @@ function getRoomUsers(room) {
 module.exports = {
   registerUser,
   getUser,
+  userJoinsRoom,
+  userLeavesRoom,
   userJoin,
   getCurrentUser,
   userLeave,
-  getRoomUsers,
-  userJoinsRoom
+  getRoomUsers
 };

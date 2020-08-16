@@ -2,7 +2,7 @@
 
 :root {
 	--dark-color-a: #667aff;
-	--dark-color-b: #7386ff;
+	--dark-color-b: #8a9aff;
 	--light-color: #e6e9ff;
 	--success-color: #5cb85c;
 	--error-color: #d9534f;
@@ -34,9 +34,28 @@ a {
 	padding: 5px 15px;
 	background: var(--light-color);
 	color: var(--dark-color-a);
-	border: 0;
+	border-color: var(--dark-color-a);
 	font-size: 16px;
 	height: 40px;
+}
+
+fieldset {
+	border: none;
+	position: relative;
+}
+
+fieldset > legend {
+	font-size: 18px;
+	font-weight: bold;
+	margin-bottom: 20px;
+}
+
+fieldset > a {
+	position: absolute;
+	top: 0;
+	right: 0;
+	color: white;
+	text-decoration: underline;
 }
 
 /* Chat Page */
@@ -59,13 +78,27 @@ a {
 	justify-content: space-between;
 }
 
+.chat-header h2 {
+	font-size: 18px;
+	display: none;
+}
+
 nav {
 	background: var(--dark-color-a);
 	color: #fff;
-	padding: 0 15px 15px 15px;
+	padding-bottom: 15px;
 	display: flex;
 	align-items: center;
-	justify-content: space-between;
+	text-align: center;
+	justify-content: flex-end;
+}
+
+nav > .btn {
+	margin: 0 18px;
+}
+
+nav > .btn:last-child {
+	margin-right: 0;
 }
 
 .chat-main {
@@ -74,15 +107,15 @@ nav {
 }
 
 .chat-sidebar {
-	background: var(--dark-color-b);
+	background: var(--dark-color-a);
 	color: #fff;
 	padding: 20px 20px 60px;
 	overflow-y: scroll;
 }
 
 .chat-sidebar h2 {
-	font-size: 20px;
-	background: rgba(0, 0, 0, 0.1);
+	font-size: 16px;
+	font-weight: 100;
 	padding: 10px;
 	margin-bottom: 20px;
 }
@@ -92,7 +125,7 @@ nav {
 }
 
 .chat-sidebar ul li {
-	padding: 10px 0;
+	padding: 10px 0 10px 10px;
 }
 
 .chat-messages {
@@ -120,6 +153,11 @@ nav {
 	color: #777;
 }
 
+#chat-form > div{
+	height: 40px;
+	width: 100%;
+}
+
 .chat-form-container {
 	padding: 20px 30px;
 	background-color: var(--dark-color-a);
@@ -134,6 +172,7 @@ nav {
 	padding: 5px;
 	height: 40px;
 	flex: 1;
+	border-color: var(--dark-color-a);
 }
 
 .form-control > input {
@@ -153,11 +192,18 @@ nav {
 	background: var(--dark-color-a);
 	border-top-left-radius: 5px;
 	border-top-right-radius: 5px;
+	position: relative;
+}
+
+.join-header > button {
+	position: absolute;
+	top: 20px;
+	right: 20px;
 }
 
 .join-main {
 	padding: 30px 40px;
-	background: var(--dark-color-b);
+	background: var(--dark-color-a);
 }
 
 .join-main p {
@@ -198,6 +244,12 @@ nav {
 	.chat-main {
 		display: block;
 	}
+
+	.chat-header h2.room-name {
+		font-size: 18px;
+		font-weight: bold;
+		display: block;
+	}
 	
 	.chat-sidebar {
 		display: none;
@@ -206,8 +258,8 @@ nav {
 	.btn {
 		font-size: 12px;
 	}
-}
-#chat-form > div{
-	height: 40px;
-	width: 100%;
+
+	nav > .btn {
+		margin: 0 12px;
+	}
 }

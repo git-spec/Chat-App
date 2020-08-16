@@ -32,10 +32,10 @@
         </div>
         <script>
             document.querySelector('.btn').addEventListener('click', e => {
-                e.preventDefault();
+				e.preventDefault();
+				// open chat of selected room
 				const roomSelect = document.querySelector('#room');
-				// console.log(roomSelect.options[roomSelect.selectedIndex].getAttribute('idx'));
-				window.location = '/chat/' + roomSelect.options[roomSelect.selectedIndex].value + '&' + roomSelect.options[roomSelect.selectedIndex].getAttribute('idx');
+				window.location = '/chat/' + roomSelect.options[roomSelect.selectedIndex].value + '/' + roomSelect.options[roomSelect.selectedIndex].getAttribute('idx');
             });
         </script>
 	</body>

@@ -50,8 +50,8 @@ function getUser(username, password) {
 
 // connect user with room
 function setUsersRoom(userID, roomID) {
-  return new Promise((reject, resolve) => {
-    runQuery(`INSERT INTO users_room (userID, roomID) VALUES ('${userID}', '${roomID}')`).then(() => {
+  return new Promise(( resolve, reject) => {
+    runQuery(`INSERT INTO users_room (userID, roomID) VALUES (${userID}, ${roomID})`).then(() => {
       resolve();
     }).catch(err => {
       reject(err);

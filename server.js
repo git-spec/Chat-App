@@ -16,7 +16,7 @@ const {
   getCurrentUser,
   userLeave,
   getRoomUsers,
-  setUsersRoom
+  userJoinsRoom
 } = require('./utils/users');
 const {
   getRooms,
@@ -82,12 +82,12 @@ io.on('connection', socket => {
   // Listen for chatMessage
   socket.on('chatMessage', msg => {
     const user = getCurrentUser(socket.id);
-    console.log(user.room);
+    // console.log(user.room);
     // console.log(socket.handshake.session.room);
-    console.log(socket.handshake.session.userID);
+    // console.log(socket.handshake.session.userID);
 
     getRoom(user.room).then(element => {
-      console.log(element[0].ID);
+      // console.log(element[0].ID);
       insertMessage(msg, socket.handshake.session.userID, element[0].ID);
     }).catch(err => {
       console.log(err.message);
@@ -205,9 +205,9 @@ app.get('/room', (req, res) => {
 app.get('/chat/:room&:id', (req, res) => {
   if (req.session.user) {
     const chatRoom = req.params.room;
-    if (chatRoom ) {
+    if (chatRoom) {
       // combine userID and roomID
-      setUsersRoom(req.session.userID, req.params.id).then(() => {}).catch(err => {});
+      userJoinsRoom(req.session.userID, req.params.id).then(() => {}).catch(err => {});
       // render page chat
       res.render('chat', {username: req.session.user, chatRoom});
     } else {

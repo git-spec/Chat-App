@@ -3,9 +3,11 @@ const runQuery = require('./connection');
 
 function insertMessage(message, userID, roomID) {
   return new Promise((resolve, reject) => {
+    // replaces every single- and double-quote in a message 
+    // with their entities to avoid errors in mySQL and JSON
     runQuery(`
               INSERT INTO messages (message, userID, roomID)
-              Values ('${message}', '${userID}', '${roomID}')
+              Values ('${message.replace(/'/g, "&#39;").replace(/"/g, "&#34;")}', ${userID}, ${roomID})
     `).then(() => {
       resolve();
     }).catch(err => {
@@ -22,9 +24,6 @@ function getMessages(roomName) {
               INNER JOIN users ON messages.userID = users.ID
               WHERE rooms.room LIKE '${roomName}'
     `).then(messages => {
-      messages.forEach(message => {
-        message.message =  message.message.toString()
-      })
       resolve(messages);
     }).catch(err => {
       reject(err);
@@ -42,15 +41,13 @@ function getMessage(userID) {
   });
 };
 
- function formatMessage(username, text) {
-    return {
-      username,
-      text,
-      time: moment().format('H:mm')
-    };
-  
-  
-}
+function formatMessage(username, text) {
+  return {
+    username,
+    text,
+    time: moment().format('DD.MM.YY H:mm')
+  };
+};
 
 module.exports = {
   insertMessage,

@@ -25,7 +25,8 @@ const {
 } = require('./utils/users');
 const {
   getRooms,
-  getRoom
+  getRoom,
+  createRoom
 } = require('./utils/rooms');
 
 // socketio server
@@ -137,6 +138,7 @@ io.on('connection', socket => {
 
 // route to main
 app.get('/', (req, res) => {
+  // check if valid user
   if (req.session.user) {
     res.redirect('/room');
   } else {
@@ -152,7 +154,7 @@ app.post('/', (req, res) => {
   const email = req.body.email;
   const password = req.body.password;
   const repassword = req.body.repassword;
-  // 1 registration or login successful
+  // 1 login successful
   // 2 user already exists
   // 3 user not found
   // 4 server error
@@ -162,24 +164,18 @@ app.post('/', (req, res) => {
       getUser(username, password).then(user => {
         req.session.user = user.username;
         req.session.userID = user.ID;
-        // console.log(req.session);
-        // login successful
         res.json(1);
       }).catch(err => {
         if (err === 3) {
-          // user not found
           res.json(3);
         } else {
-          // server error
           res.json(4);
         };
       });  
     }).catch(err => {
       if (err === "exists") {
-        // user already exists
         res.json(2);
       } else {
-        // server error
         res.json(4);
       };
     });
@@ -187,19 +183,15 @@ app.post('/', (req, res) => {
     getUser(username, password).then(user => {
       req.session.user = user.username;
       req.session.userID = user.ID;
-      // login successful
       res.json(1);
     }).catch(err => {
       if (err === 3) {
-        // user not found
         res.json(3);
       } else {
-        // server error
         res.json(4);
       };
     });
   } else {
-    // missing entries
     res.json(5);
   };
 });
@@ -213,34 +205,65 @@ app.get('/room', (req, res) => {
       res.render('room', {rooms});
     }).catch(err => {
       res.redirect('/');
-    })
+    });
   } else {
     res.redirect('/');
-  }
+  };
+});
+
+// handle with data to create a new chatroom
+app.post('/room', (req, res) => {
+  // 1 creating a room was successful
+  // 2 room already exists
+  // 3 creating a room was not successful
+  // 4 server error
+  if (req.body.roomname) {
+    // insert a new room into db
+    createRoom(req.body.roomname).then(() => {
+      res.json(1);
+    }).catch(err => {
+      if (err === 'exists') {
+        res.json(2);
+      } else {
+        res.json(3);
+      };
+    });
+  } else {
+    res.json(4);
+  };
 });
 
 // route to chat
-app.get('/chat/:room/:id', (req, res) => {
+app.get('/chat/:room', (req, res) => {
+  // check if valid user
   if (req.session.user) {
-    const chatRoom = req.params.room;
-    const roomId = req.params.id;
-    if (chatRoom) {
-      // combine userID and roomID
-      // render page chat
-      joinUsersRoom(req.session.userID, roomId).then(() => {
-        getMessages(chatRoom).then(messages => {
-          const msgs = []
-          messages.forEach(msg => {
-            msgs.push({
-              username: msg.username,
-              text: msg.message,
-              time: moment(msg.message_time).format('H:mm')
-            })
+    // const chatRoom = req.params.room;
+    // const roomID = req.params.id;
+    if (req.params.room) {
+      // render room chat
+      getRoom(req.params.room).then(room => {
+        // combine userID and roomID and store into db
+        joinUsersRoom(req.session.userID, room[0].ID).then(() => {
+          // get history of messages
+          getMessages(req.params.room).then(messages => {
+            const msgs = [];
+            messages.forEach(msg => {
+              msgs.push({
+                username: msg.username,
+                text: msg.message,
+                time: moment(msg.message_time).format('DD.MM.YY H:mm')
+              });
+            });
+            // console.log(msgs);
+            // console.log(JSON.stringify(msgs));
+            // console.log(JSON.parse(JSON.stringify(msgs)));
+            res.render('chat', {username: req.session.user, chatRoom: req.params.room, oldMessages: JSON.stringify(msgs)});
+          }).catch(err => {
+            res.render('chat', {username: req.session.user, chatRoom: req.params.room, oldMessages: JSON.stringify([])});
           })
-          res.render('chat', {username: req.session.user, chatRoom, oldMessages: JSON.stringify(msgs)});
-        }).catch(error => {
-          res.render('chat', {username: req.session.user, chatRoom, oldMessages: JSON.stringify([])});
-        })
+        }).catch(err => {
+          console.log(err);
+        });  
       }).catch(err => {
         console.log(err);
       });

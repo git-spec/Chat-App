@@ -3,7 +3,7 @@ const runQuery = require('./connection');
 
 function insertMessage(message, userID, roomID) {
   return new Promise((resolve, reject) => {
-    // replaces every single- and double-quote in a message 
+    // replaces single- and double-quotes in a message 
     // with their entities to avoid errors in mySQL and JSON
     runQuery(`
               INSERT INTO messages (message, userID, roomID)

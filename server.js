@@ -15,17 +15,15 @@ const {
 } = require('./utils/messages');
 const {
   registerUser,
-  getUser,
+  loginUser,
   joinUsersRoom,
   leaveUsersRoom,
-  userJoin,
-  getCurrentUser,
-  userLeave,
   getRoomUsers
 } = require('./utils/users');
 const {
   getRooms,
   getRoom,
+  getRoomByUserID,
   createRoom
 } = require('./utils/rooms');
 
@@ -61,77 +59,78 @@ const botName = 'ChatApp Bot';
 
 // run when client connects
 io.on('connection', socket => {
-  socket.on('joinRoom', ({ username, room }) => {
+
+  // join to chatroom
+  socket.on('joinRoom', ({ username, room, roomID }) => {
+    const userID = socket.handshake.session.userID;
+    // const user = userJoin(socket.id, username, room);
     // create user object
-    const user = userJoin(socket.id, username, room);
-    // subscribe to a given channel
-    socket.join(user.room);
-
-    // welcome current user
-    socket.emit('message', formatMessage(botName, 'Welcome to ChatApp!'));
-
-    // broadcast when a user connects
-    socket.broadcast
-      .to(user.room)
-      .emit(
-        'message',
-        formatMessage(botName, `${user.username} has joined the chat`)
-      );
-
-    // send users and room info
-    io.to(user.room).emit('roomUsers', {
-      room: user.room,
-      users: getRoomUsers(user.room)
-    });
+    const user = { username, userID, room, roomID };
+    // combine userID and roomID and store their relation into db
+    joinUsersRoom(user.userID, user.roomID).then(() => {
+      // subscribe to a given channel
+      socket.join(user.room);
+      // welcome current user
+      socket.emit('message', formatMessage(botName, 'Welcome to ChatApp!'));
+      // broadcast when a user connects
+      socket.broadcast.to(user.room).emit('message', formatMessage(botName, `${user.username} has joined the chat`));
+      // get the current users in this room from db
+      getRoomUsers(user.room).then(users => {
+        const usersArr = [];
+        users.forEach(user => {
+          usersArr.push(user.username);
+        });
+        // send users and room info
+        io.to(user.room).emit('roomUsers', { room: user.room, users: usersArr });
+      }).catch(err => {
+        console.log(err);
+      });
+    }).catch(err => {
+      console.log(err);
+    });  
   });
 
   // listen for chatMessage
-  socket.on('chatMessage', msg => {
-    const user = getCurrentUser(socket.id);
+  socket.on('chatMessage', ({ msg, username, room, roomID }) => {
+    // const user = getCurrentUser(socket.id);
     const userID = socket.handshake.session.userID;
-    // saves message into database
-    getRoom(user.room).then(roomElement => {
-      const roomID = roomElement[0].ID;
-      insertMessage(msg, userID, roomID).then(() => {
-        // ???
-      }).catch(err => {
-        console.log(err.message);
-      });
+    const user = { msg, username, userID, room, roomID };
+    // save message to db
+    insertMessage(user.msg, user.userID, user.roomID).then(() => {
+      io.to(user.room).emit('message', formatMessage(user.username, user.msg));
     }).catch(err => {
-      console.log(err.message);
+      console.log(err);
     });
-    io.to(user.room).emit('message', formatMessage(user.username, msg));
   });
 
   // runs when client disconnects
   socket.on('disconnect', () => {
-    const user = userLeave(socket.id);
+    // const user = userLeave(socket.id);
+    const user = socket.handshake.session.user;
     const userID = socket.handshake.session.userID;
-    // deletes user & room correlation from database when user lefts the room
-    getRoom(user.room).then(roomElement => {
-      const roomID = roomElement[0].ID;
-      leaveUsersRoom(userID, roomID).then(() => {
-        // ???
+    getRoomByUserID(userID).then(room => {
+      const roomname = room[0].room;
+      // deletes user & room correlation from database when user lefts the room
+      leaveUsersRoom(userID, room[0].ID).then(() => {
+        // get the current users in this room from db
+        getRoomUsers(roomname).then(users => {
+          const usersArr = [];
+          users.forEach(user => {
+            usersArr.push(user.username);
+          });
+          // send info to chatroom that user has left the chat
+          io.to(roomname).emit('message', formatMessage(botName, `${user} has left the chat`));
+          // send users and room info
+          io.to(roomname).emit('roomUsers', { room: roomname, users: usersArr });
+        }).catch(err => {
+          console.log(err);
+        });
       }).catch(err => {
-        console.log(err.message);
+        console.log(err);
       });
     }).catch(err => {
-      console.log(err.message);
+      console.log(err);
     });
-
-    if (user) {
-      io.to(user.room).emit(
-        'message',
-        formatMessage(botName, `${user.username} has left the chat`)
-      );
-
-      // send users and room info
-      io.to(user.room).emit('roomUsers', {
-        room: user.room,
-        users: getRoomUsers(user.room)
-      });
-    };
-
   });
 
 });
@@ -161,7 +160,7 @@ app.post('/', (req, res) => {
   // 5 missing entries
   if (firstname && lastname && username && email && password && password === repassword) {
     registerUser(firstname, lastname, username, email, password).then(() => {
-      getUser(username, password).then(user => {
+      loginUser(username, password).then(user => {
         req.session.user = user.username;
         req.session.userID = user.ID;
         res.json(1);
@@ -180,7 +179,7 @@ app.post('/', (req, res) => {
       };
     });
   } else if (username && password) {
-    getUser(username, password).then(user => {
+    loginUser(username, password).then(user => {
       req.session.user = user.username;
       req.session.userID = user.ID;
       res.json(1);
@@ -237,35 +236,29 @@ app.post('/room', (req, res) => {
 app.get('/chat/:room', (req, res) => {
   // check if valid user
   if (req.session.user) {
-    // const chatRoom = req.params.room;
-    // const roomID = req.params.id;
     if (req.params.room) {
-      // render room chat
+      // get room-element from db
       getRoom(req.params.room).then(room => {
-        // combine userID and roomID and store into db
-        joinUsersRoom(req.session.userID, room[0].ID).then(() => {
-          // get history of messages
-          getMessages(req.params.room).then(messages => {
-            const msgs = [];
-            messages.forEach(msg => {
-              msgs.push({
-                username: msg.username,
-                text: msg.message,
-                time: moment(msg.message_time).format('DD.MM.YY H:mm')
-              });
+        const roomID = room[0].ID;
+        // get history of messages from db
+        getMessages(req.params.room).then(messages => {
+          const msgs = [];
+          messages.forEach(msg => {
+            msgs.push({
+              username: msg.username,
+              text: msg.message,
+              time: moment(msg.message_time).format('DD.MM.YY H:mm')
             });
-            // console.log(msgs);
-            // console.log(JSON.stringify(msgs));
-            // console.log(JSON.parse(JSON.stringify(msgs)));
-            res.render('chat', {username: req.session.user, chatRoom: req.params.room, oldMessages: JSON.stringify(msgs)});
-          }).catch(err => {
-            res.render('chat', {username: req.session.user, chatRoom: req.params.room, oldMessages: JSON.stringify([])});
-          })
+          });
+          // render room chat with old messages
+          res.render('chat', {username: req.session.user, chatRoom: req.params.room, roomID, oldMessages: JSON.stringify(msgs)});
         }).catch(err => {
-          console.log(err);
-        });  
+          // render room chat without old messages
+          res.render('chat', {username: req.session.user, chatRoom: req.params.room, roomID, oldMessages: JSON.stringify([])});
+        });
       }).catch(err => {
         console.log(err);
+        res.redirect('/room');
       });
     } else {
       res.redirect('/room');

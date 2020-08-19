@@ -20,6 +20,20 @@ function getRoom(room){
     });
 };
 
+function getRoomByUserID(userID){
+    return new Promise((resolve, reject) => {
+        runQuery(`
+                SELECT rooms.* FROM rooms
+                INNER JOIN users_room ON rooms.ID = users_room.roomID
+                WHERE users_room.userID = ${userID}
+        `).then(data => {
+            resolve(data);
+        }).catch(err => {
+            reject(err);
+        });
+    });
+};
+
 function createRoom(newRoom) {
     return new Promise((resolve, reject) => {
         runQuery(`INSERT INTO rooms (room) VALUES ('${newRoom}')`).then(data => {
@@ -37,5 +51,6 @@ function createRoom(newRoom) {
 module.exports = {
     getRooms,
     getRoom,
+    getRoomByUserID,
     createRoom
 };

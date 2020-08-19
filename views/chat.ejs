@@ -57,7 +57,7 @@
         const roomName = document.getElementsByClassName('room-name');
         const userList = document.getElementById('users');
 
-        console.log(roomName);
+        // console.log(roomName);
 
         const oldmessages = '<%-oldMessages%>';
         const oldMessagesObj = JSON.parse(oldmessages)
@@ -70,13 +70,13 @@
         //   ignoreQueryPrefix: true
         // });
 
-        const username = '<%=username%>'
-        const room = '<%=chatRoom%>'
-
+        const username = '<%=username%>';
+        const room = '<%=chatRoom%>';
+        const roomID = '<%=roomID%>';
         const socket = io();
 
         // Join chatroom
-        socket.emit('joinRoom', { username, room });
+        socket.emit('joinRoom', { username, room, roomID });
 
         // Get room and users
         socket.on('roomUsers', ({ room, users }) => {
@@ -88,7 +88,6 @@
         socket.on('message', message => {
             console.log(message);
             outputMessage(message);
-            
             // Scroll down
             chatMessages.scrollTop = chatMessages.scrollHeight;
         });
@@ -99,7 +98,7 @@
             // Get message text
             const msg = e.target.elements.msg.value;
             // Emit message to server
-            socket.emit('chatMessage', msg);
+            socket.emit('chatMessage', { msg, username, room, roomID });
             // Clear input
             e.target.elements.msg.value = '';
             e.target.elements.msg.focus();
@@ -122,7 +121,7 @@
 
         // Add users to DOM
         function outputUsers(users) {
-            userList.innerHTML = `${users.map(user => `<li>${user.username}</li>`).join('')}`;
+            userList.innerHTML = `${users.map(user => `<li>${user}</li>`).join('')}`;
         };
         // leave room
         document.querySelector('nav > .btn:last-child').addEventListener('click', e => {

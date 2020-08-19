@@ -57,9 +57,9 @@ function joinUsersRoom(userID, roomID) {
 };
 
 // user leaves room
-function leaveUsersRoom(userID) {
+function leaveUsersRoom(userID, roomID) {
   return new Promise((resolve, reject) => {
-    runQuery(`DELETE FROM users_room WHERE userID=${userID}`).then(() => {
+    runQuery(`DELETE FROM users_room WHERE userID=${userID} AND roomID=${roomID}`).then(() => {
       resolve();
     }).catch(err => {
       reject(err);

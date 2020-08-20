@@ -116,10 +116,10 @@ io.on('connection', socket => {
     // set new filename from roomname, userID and timestamp
     const newFilename = room.trim().replace(/ /g, '_') + '_' + userID + '_' + Date.now() + ext;
     // set image URL
-    const imgUrl = '/upload/' + newFilename;
-    console.log(imgUrl);
+    const imgUrl = '/upload/' + filename;
     // set image path
-    const imgPath = './public/upload/' + newFilename;
+    const imgPath = './public/upload/' + filename;
+    console.log(imgUrl);
     console.log(imgPath);
     // buffer image file
     const buffer = Buffer.from(base64, 'base64');

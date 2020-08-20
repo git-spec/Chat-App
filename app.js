@@ -6,6 +6,8 @@ const moment = require('moment');
 const express = require('express');
 const app = express();
 const socketio = require('socket.io');
+const Entities = require('html-entities').XmlEntities;
+const entities = new Entities();
 
 // modules
 const {
@@ -54,6 +56,7 @@ app.use(express.json());
 app.set('view engine', 'ejs');
 app.set('views', __dirname + '/views');
 
+// globals
 const botName = 'ChatApp Bot';
 
 /* ************************************************************ ROUTES ******************************************************* */
@@ -64,7 +67,6 @@ io.on('connection', socket => {
   // join to chatroom
   socket.on('joinRoom', ({ username, room, roomID }) => {
     const userID = socket.handshake.session.userID;
-    // const user = userJoin(socket.id, username, room);
     // create user object
     const user = { username, userID, room, roomID };
     // combine userID and roomID and store their relation into db
@@ -93,11 +95,11 @@ io.on('connection', socket => {
 
   // listen for chatMessage
   socket.on('chatMessage', ({ msg, username, room, roomID }) => {
-    // const user = getCurrentUser(socket.id);
     const userID = socket.handshake.session.userID;
     const user = { msg, username, userID, room, roomID };
+    // validate message
     // save message to db
-    insertMessage(user.msg, user.userID, user.roomID).then(() => {
+    insertMessage(entities.encode(user.msg), user.userID, user.roomID).then(() => {
       io.to(user.room).emit('message', formatMessage(user.username, user.msg));
     }).catch(err => {
       console.log(err);
@@ -106,7 +108,6 @@ io.on('connection', socket => {
 
   // runs when client disconnects
   socket.on('disconnect', () => {
-    // const user = userLeave(socket.id);
     const user = socket.handshake.session.user;
     const userID = socket.handshake.session.userID;
     getRoomByUserID(userID).then(room => {

@@ -5,9 +5,9 @@ function insertMessage(message, userID, roomID) {
   return new Promise((resolve, reject) => {
     runQuery(`
               INSERT INTO messages (message, userID, roomID)
-              Values ('${message}', '${userID}', '${roomID}')
+              Values ('${message}', ${userID}, ${roomID})
     `).then(() => {
-      resolve();
+      resolve(message);
     }).catch(err => {
       reject(err);
     });
@@ -20,7 +20,7 @@ function getMessages(roomName) {
               SELECT messages.*, users.username as username FROM messages
               INNER JOIN rooms ON messages.roomID = rooms.ID
               INNER JOIN users ON messages.userID = users.ID
-              WHERE rooms.room LIKE '${roomName}'
+              WHERE rooms.room LIKE '${roomName}' ORDER BY message_time
     `).then(messages => {
       messages.forEach(message => {
         message.message =  message.message.toString()

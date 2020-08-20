@@ -66,10 +66,10 @@ const botName = 'ChatApp Bot';
 io.on('connection', socket => {
 
   // join to chatroom
-  socket.on('joinRoom', ({ username, room, roomID }) => {
+  socket.on('joinRoom', ({username, room, roomID}) => {
     const userID = socket.handshake.session.userID;
     // create user object
-    const user = { username, userID, room, roomID };
+    const user = {username, userID, room, roomID};
     // combine userID and roomID and store their relation into db
     joinUsersRoom(user.userID, user.roomID).then(() => {
       // subscribe to a given channel
@@ -85,7 +85,7 @@ io.on('connection', socket => {
           usersArr.push(user.username);
         });
         // send users and room info
-        io.to(user.room).emit('roomUsers', { room: user.room, users: usersArr });
+        io.to(user.room).emit('roomUsers', {room: user.room, users: usersArr});
       }).catch(err => {
         console.log(err);
       });
@@ -95,9 +95,9 @@ io.on('connection', socket => {
   });
 
   // listen for chatMessage
-  socket.on('chatMessage', ({ msg, username, room, roomID }) => {
+  socket.on('chatMessage', ({msg, username, room, roomID}) => {
     const userID = socket.handshake.session.userID;
-    const user = { msg, username, userID, room, roomID };
+    const user = {msg, username, userID, room, roomID};
     // validate message
     // save message to db
     insertMessage(entities.encode(user.msg), user.userID, user.roomID).then(() => {
@@ -110,18 +110,25 @@ io.on('connection', socket => {
   // listen for image
   socket.on('image', async ({base64, filename, username, room, roomID}) => {
     const userID = socket.handshake.session.userID;
-    const user = { msg, username, userID, room, roomID };
+    const user = {username, userID, room, roomID};
+    // get extension from file
+    const ext = filename.substr(filename.lastIndexOf('.'));
+    // set new filename from roomname, userID and timestamp
+    const newFilename = room.trim().replace(/ /g, '_') + '_' + userID + '_' + Date.now() + ext;
     // set image URL
-    const imgUrl = '/upload/' + filename;
+    const imgUrl = '/upload/' + newFilename;
+    console.log(imgUrl);
     // set image path
-    const filepath = './public/upload/' + filename;
+    const imgPath = './public/upload/' + newFilename;
+    console.log(imgPath);
     // buffer image file
     const buffer = Buffer.from(base64, 'base64');
-    // validate size
-    let len = Buffer.byteLength(buffer) / (1024 * 1024); // MB
-    if (len < 6) {
+    // get filesize of image in MB
+    let imgSize = Buffer.byteLength(buffer) / (1024 * 1024);
+    // validate size of image
+    if (imgSize < 6) {
       // save image into upload folder
-      await fs.writeFile(filepath, buffer, (err) => {
+      await fs.writeFile(imgPath, buffer, err => {
         if (err) {
           console.log(err);
         } else {
@@ -130,7 +137,7 @@ io.on('connection', socket => {
       });
       // save message to db
       insertMessage(imgUrl, user.userID, user.roomID).then(() => {
-        io.to(user.room).emit('message', formatMessage(user.username, user.msg));
+        io.to(user.room).emit('message', formatMessage(user.username, imgUrl));
       }).catch(err => {
         console.log(err);
       });
@@ -155,7 +162,7 @@ io.on('connection', socket => {
           // send info to chatroom that user has left the chat
           io.to(roomname).emit('message', formatMessage(botName, `${user} has left the chat`));
           // send users and room info
-          io.to(roomname).emit('roomUsers', { room: roomname, users: usersArr });
+          io.to(roomname).emit('roomUsers', {room: roomname, users: usersArr});
         }).catch(err => {
           console.log(err);
         });

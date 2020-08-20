@@ -45,10 +45,20 @@
 			</main>
 		</div>
         <script>
+/* ************************************************************ EVENTS ******************************************************* */
 			// logout
 				document.querySelector('#logoutBtn').addEventListener('click', e => {
 				e.preventDefault();
 				window.location = '/logout';
+			});
+
+			// switch from select to create room
+			document.querySelector('#selectRoom > a').addEventListener('click', e => {
+				e.preventDefault();
+				if(document.querySelector('#createRoom').style.display === 'none') {
+					document.querySelector('#createRoom').style.display = 'block';
+					e.target.parentElement.style.display = 'none';
+				};
 			});
 			// switch from create to select room
 			document.querySelector('#createRoom > a').addEventListener('click', e => {
@@ -58,20 +68,11 @@
 					e.target.parentElement.style.display = 'none';
 				};
 			});
-			// switch from select to create room
-			document.querySelector('#selectRoom > a').addEventListener('click', e => {
-				e.preventDefault();
-				if(document.querySelector('#createRoom').style.display === 'none') {
-					document.querySelector('#createRoom').style.display = 'block';
-					e.target.parentElement.style.display = 'none';
-				};
-			});
+
 			// join selected room
             document.querySelector('#joinSelectedRoom').addEventListener('click', e => {
 				e.preventDefault();
-				// open chat of selected room
 				const roomSelect = document.querySelector('#roomSelector');
-				// window.location = '/chat/' + roomSelect.options[roomSelect.selectedIndex].value + '/' + roomSelect.options[roomSelect.selectedIndex].getAttribute('idx');
 				window.location = '/chat/' + roomSelect.options[roomSelect.selectedIndex].value;
 			});
 			// join created room

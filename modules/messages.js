@@ -21,7 +21,7 @@ function getMessages(roomName) {
               SELECT messages.*, users.username as username FROM messages
               INNER JOIN rooms ON messages.roomID = rooms.ID
               INNER JOIN users ON messages.userID = users.ID
-              WHERE rooms.room LIKE '${roomName}'
+              WHERE rooms.room LIKE '${roomName}' ORDER BY message_time
     `).then(messages => {
       resolve(messages);
     }).catch(err => {

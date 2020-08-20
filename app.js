@@ -5,6 +5,7 @@ const http = require('http');
 const moment = require('moment');
 const express = require('express');
 const app = express();
+const fs = require('fs');
 const socketio = require('socket.io');
 const Entities = require('html-entities').XmlEntities;
 const entities = new Entities();
@@ -21,7 +22,7 @@ const {
   loginUser,
   joinUsersRoom,
   leaveUsersRoom,
-  getRoomUsers
+  getUsersRoom
 } = require('./modules/users');
 const {
   getRooms,
@@ -59,7 +60,7 @@ app.set('views', __dirname + '/views');
 // globals
 const botName = 'ChatApp Bot';
 
-/* ************************************************************ ROUTES ******************************************************* */
+/* ************************************************************ SOCKET.IO ******************************************************* */
 
 // run when client connects
 io.on('connection', socket => {
@@ -78,7 +79,7 @@ io.on('connection', socket => {
       // broadcast when a user connects
       socket.broadcast.to(user.room).emit('message', formatMessage(botName, `${user.username} has joined the chat`));
       // get the current users in this room from db
-      getRoomUsers(user.room).then(users => {
+      getUsersRoom(user.room).then(users => {
         const usersArr = [];
         users.forEach(user => {
           usersArr.push(user.username);
@@ -106,16 +107,47 @@ io.on('connection', socket => {
     });
   });
 
+  // listen for image
+  socket.on('image', async ({base64, filename, username, room, roomID}) => {
+    const userID = socket.handshake.session.userID;
+    const user = { msg, username, userID, room, roomID };
+    // set image URL
+    const imgUrl = '/upload/' + filename;
+    // set image path
+    const filepath = './public/upload/' + filename;
+    // buffer image file
+    const buffer = Buffer.from(base64, 'base64');
+    // validate size
+    let len = Buffer.byteLength(buffer) / (1024 * 1024); // MB
+    if (len < 6) {
+      // save image into upload folder
+      await fs.writeFile(filepath, buffer, (err) => {
+        if (err) {
+          console.log(err);
+        } else {
+          console.log('image saved');
+        };
+      });
+      // save message to db
+      insertMessage(imgUrl, user.userID, user.roomID).then(() => {
+        io.to(user.room).emit('message', formatMessage(user.username, user.msg));
+      }).catch(err => {
+        console.log(err);
+      });
+    };
+  });
+
   // runs when client disconnects
   socket.on('disconnect', () => {
     const user = socket.handshake.session.user;
     const userID = socket.handshake.session.userID;
+    // get room by userID from db
     getRoomByUserID(userID).then(room => {
       const roomname = room[0].room;
       // deletes user & room correlation from database when user lefts the room
       leaveUsersRoom(userID, room[0].ID).then(() => {
         // get the current users in this room from db
-        getRoomUsers(roomname).then(users => {
+        getUsersRoom(roomname).then(users => {
           const usersArr = [];
           users.forEach(user => {
             usersArr.push(user.username);
@@ -137,6 +169,7 @@ io.on('connection', socket => {
 
 });
 
+/* ************************************************************ ROUTES ******************************************************* */
 // route to main
 app.get('/', (req, res) => {
   // check if valid user

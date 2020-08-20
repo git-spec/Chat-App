@@ -3,11 +3,10 @@ const runQuery = require('./connection');
 
 function insertMessage(message, userID, roomID) {
   return new Promise((resolve, reject) => {
-    // replaces single- and double-quotes in a message 
-    // with their entities to avoid errors in mySQL and JSON
+    // replace backslashes in a message with their entity to avoid errors in mySQL and JSON
     runQuery(`
               INSERT INTO messages (message, userID, roomID)
-              Values ('${message.replace(/'/g, "&#39;").replace(/"/g, "&#34;")}', ${userID}, ${roomID})
+              Values ('${message.replace(/\\/g, "&#92;")}', ${userID}, ${roomID})
     `).then(() => {
       resolve();
     }).catch(err => {

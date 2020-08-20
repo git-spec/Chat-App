@@ -9,9 +9,9 @@ function connection() {
     return new Promise((resolve, reject) => {
         if(ctn) {
             if(ctn.state === "disconnected") {
-                ctn.connect(error => {
-                    if(error) {
-                        reject(error);
+                ctn.connect(err => {
+                    if(err) {
+                        reject(err);
                     } else {
                         resolve();
                     };
@@ -28,9 +28,9 @@ function connection() {
                 password: '12345678',
                 database: 'chatapp'
             });
-            ctn.connect(error => {
-                if(error) {
-                    reject(error);
+            ctn.connect(err => {
+                if(err) {
+                    reject(err);
                 } else {
                     resolve();
                 };
@@ -42,15 +42,15 @@ function connection() {
 function runQuery(queryString) {
     return new Promise((resolve, reject) => {
         connection().then(() => {
-            ctn.query(queryString, (error, result, fields) => {
-                if(error) {
-                    reject(error);
+            ctn.query(queryString, (err, result, fields) => {
+                if(err) {
+                    reject(err);
                 } else {
                     resolve(result);
                 };
             });
-        }).catch((error) => {
-            reject(error);
+        }).catch((err) => {
+            reject(err);
         });
     });
 };

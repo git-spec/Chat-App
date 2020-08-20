@@ -17,32 +17,107 @@
 		<div class="join-container">
 			<header class="join-header">
 				<h1>ChatApp</h1>
-				<button class="btn"><i class="fas fa-times"></i></button>
+				<button class="btn" id="logoutBtn"><i class="fas fa-times"></i></button>
 			</header>
 			<main class="join-main">
-				<div class="form-control">
-					<label for="room">Room</label>
-					<select name="room" id="room">
-						<%for (let i = 0; i < rooms.length; i++){%>
-						<option value="<%= rooms[i].room %>" idx="<%= rooms[i].ID %>"><%= rooms[i].room %></option>
-						<%}%>
-					</select>
-				</div>
-				<button type="submit" class="btn">Join Chat</button>
+				<fieldset id="selectRoom">
+					<legend>Select Room</legend>
+					<a href="#">Create Room</a>
+					<div class="form-control">
+						<label for="roomSelector">Room</label>
+						<select name="roomSelector" id="roomSelector">
+							<%for (let i = 0; i < rooms.length; i++){%>
+							<option value="<%= rooms[i].room %>" idx="<%= rooms[i].ID %>"><%= rooms[i].room %></option>
+							<%}%>
+						</select>
+					</div>
+					<button type="submit" class="btn" id="joinSelectedRoom">Join Chat</button>
+				</fieldset>
+				<fieldset id="createRoom" style="display: none;">
+					<legend>Create Room</legend>
+					<a href="#">Select Room</a>
+					<div class="form-control">
+						<label for="createRoomInput">Room</label>
+						<input type="text" name="createRoomInput" id="createRoomInput" placeholder="Enter Roomname" required>
+					</div>
+					<button type="submit" class="btn" id="joinCreatedRoom">Join Chat</button>
+				</fieldset>
 			</main>
-        </div>
+		</div>
         <script>
-			// join room
-            document.querySelector('main > .btn').addEventListener('click', e => {
-				e.preventDefault();
-				// open chat of selected room
-				const roomSelect = document.querySelector('#room');
-				window.location = '/chat/' + roomSelect.options[roomSelect.selectedIndex].value + '/' + roomSelect.options[roomSelect.selectedIndex].getAttribute('idx');
-			});
+/* ************************************************************ EVENTS ******************************************************* */
 			// logout
-			document.querySelector('header > .btn').addEventListener('click', e => {
+				document.querySelector('#logoutBtn').addEventListener('click', e => {
 				e.preventDefault();
 				window.location = '/logout';
+			});
+
+			// switch from select to create room
+			document.querySelector('#selectRoom > a').addEventListener('click', e => {
+				e.preventDefault();
+				if(document.querySelector('#createRoom').style.display === 'none') {
+					document.querySelector('#createRoom').style.display = 'block';
+					e.target.parentElement.style.display = 'none';
+				};
+			});
+			// switch from create to select room
+			document.querySelector('#createRoom > a').addEventListener('click', e => {
+				e.preventDefault();
+				if(document.querySelector('#selectRoom').style.display === 'none') {
+					document.querySelector('#selectRoom').style.display = 'block';
+					e.target.parentElement.style.display = 'none';
+				};
+			});
+
+			// join selected room
+            document.querySelector('#joinSelectedRoom').addEventListener('click', e => {
+				e.preventDefault();
+				const roomSelect = document.querySelector('#roomSelector');
+				window.location = '/chat/' + roomSelect.options[roomSelect.selectedIndex].value;
+			});
+			// join created room
+            document.querySelector('#joinCreatedRoom').addEventListener('click', e => {
+				e.preventDefault();
+				const roomName = document.querySelector('#createRoomInput').value.trim();
+				if (roomName) {
+					fetch('/room', {
+						method: 'post',
+						headers: {
+							'Content-Type': 'application/json'
+						},
+						body: JSON.stringify({ roomname: roomName }),
+					}).then(response => {
+						if (response.status == 200) {
+							response.json().then(data => {
+								switch (data) {
+								case 1:
+									window.location = `/chat/${roomName}`;
+									break;
+								case 2:
+									alert("This room already exists\n Please choose another name");
+									break;
+								case 3:
+									alert("Creating a room was not successful");
+									break;
+								case 4:
+									alert("Server error");
+									break;
+								default:
+									alert("Server error");
+									break;
+								};
+							}).catch(err => {
+								alert(err.message);
+							});
+						} else {
+							alert("Server error");
+						};
+					}).catch(err => {
+						alert(err.message);
+					});
+				} else {
+					alert("Please enter a Roomname");
+				};
 			});
         </script>
 	</body>

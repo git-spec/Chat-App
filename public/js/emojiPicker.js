@@ -51,7 +51,7 @@ class EmojiPicker {
     emojiPicker.style.position = "absolute";
     emojiPicker.style.right = "2px";
     emojiPicker.style.outline = "none";
-    emojiPicker.style.top = "20px";
+    emojiPicker.style.bottom = "20px";
     emojiPicker.style.zIndex = "999";
     emojiPicker.style.display = "none";
     emojiPicker.style.width = "264px";

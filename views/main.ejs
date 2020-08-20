@@ -56,47 +56,24 @@
 			</main>
 		</div>
 		<script>
-			// post request to server
-			function request(url, data) {
-					fetch(url, {
-					method: 'POST',
-					headers: {
-						'Content-Type': 'application/json'
-					},
-					body: JSON.stringify(data)
-				}).then(response => {
-					if(response.status === 200) {
-						response.json().then(data => {
-							switch (data) {
-								case 1:
-									window.location = "/room";
-									break;
-								case 2:
-									alert("User already exists");
-									break;
-								case 3:
-									alert("User not found or password is not correct");
-									break;
-								case 4:
-									alert("Server error");
-									break;
-								case 5:
-									alert("Missing entries");
-									break;
-								default:
-									alert("Server error");
-									break;
-							}
-						}).catch(err => {
-							alert(err.message);
-						});
-					} else {
-						alert("Server Error");
-					};
-				}).catch(err => {
-					alert(err.message);
-				});				
-			};
+/* ************************************************************ EVENTS ******************************************************* */
+			// switch from register to login page
+			document.querySelector('#register > a').addEventListener('click', e => {
+				e.preventDefault();
+				if(document.querySelector('#login').style.display === 'none') {
+					document.querySelector('#login').style.display = 'block';
+					e.target.parentElement.style.display = 'none';
+				};
+			});
+			// switch from login to register page
+			document.querySelector('#login > a').addEventListener('click', e => {
+				e.preventDefault();
+				if(document.querySelector('#register').style.display === 'none') {
+					document.querySelector('#register').style.display = 'block';
+					e.target.parentElement.style.display = 'none';
+				};
+			});
+
 			// register user
 			document.querySelector('#register-btn').addEventListener('click', e => {
 				e.preventDefault()
@@ -133,9 +110,6 @@
 				// input data
 				const userName = document.querySelector('#log-username');
 				const password = document.querySelector('#log-password');
-
-				sessionStorage.setItem('username', userName.value);
-
 				if(userName.value.trim() && password.value) {
 					// user object with input data
 					const USER = {
@@ -147,22 +121,49 @@
 					alert("Not all inputs are filled");
 				};
 			});
-			// switch from login to register
-			document.querySelector('#login > a').addEventListener('click', e => {
-				e.preventDefault();
-				if(document.querySelector('#register').style.display === 'none') {
-					document.querySelector('#register').style.display = 'block';
-					e.target.parentElement.style.display = 'none';
-				};
-			});
-			// switch from register to login
-			document.querySelector('#register > a').addEventListener('click', e => {
-				e.preventDefault();
-				if(document.querySelector('#login').style.display === 'none') {
-					document.querySelector('#login').style.display = 'block';
-					e.target.parentElement.style.display = 'none';
-				};
-			});
+
+/* ************************************************************ FUNCTION ******************************************************* */
+			// post request to server
+			function request(url, data) {
+					fetch(url, {
+					method: 'POST',
+					headers: {
+						'Content-Type': 'application/json'
+					},
+					body: JSON.stringify(data)
+				}).then(response => {
+					if(response.status === 200) {
+						response.json().then(data => {
+							switch (data) {
+								case 1:
+									window.location = "/room";
+									break;
+								case 2:
+									alert("User already exists");
+									break;
+								case 3:
+									alert("User not found or password is not correct");
+									break;
+								case 4:
+									alert("Server error");
+									break;
+								case 5:
+									alert("Missing entries");
+									break;
+								default:
+									alert("Server error");
+									break;
+							};
+						}).catch(err => {
+							alert(err.message);
+						});
+					} else {
+						alert("Server Error");
+					};
+				}).catch(err => {
+					alert(err.message);
+				});				
+			};
 		</script>
 	</body>
 </html>

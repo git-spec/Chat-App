@@ -20,11 +20,11 @@
     "version": "0.2.0",
     "configurations": [
         {
-            "name": "Launch app.js via nodemon linux",
+            "name": "Launch server.js via nodemon linux",
             "type": "node",
             "request": "launch",
             "runtimeExecutable": "nodemon",
-            "program": "${workspaceFolder}/app.js",
+            "program": "${workspaceFolder}/server.js",
             "restart": true,
             "console": "integratedTerminal",
             "internalConsoleOptions": "neverOpen",

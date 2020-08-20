@@ -1,4 +1,5 @@
 /* ************************************************************ SETUP ******************************************************* */
+// imports
 const path = require('path');
 const http = require('http');
 const moment = require('moment');
@@ -6,26 +7,26 @@ const express = require('express');
 const app = express();
 const socketio = require('socket.io');
 
-// utils
+// modules
 const {
   insertMessage,
   getMessage,
   formatMessage,
   getMessages
-} = require('./utils/messages');
+} = require('./modules/messages');
 const {
   registerUser,
   loginUser,
   joinUsersRoom,
   leaveUsersRoom,
   getRoomUsers
-} = require('./utils/users');
+} = require('./modules/users');
 const {
   getRooms,
   getRoom,
   getRoomByUserID,
   createRoom
-} = require('./utils/rooms');
+} = require('./modules/rooms');
 
 // socketio server
 const server = http.createServer(app);

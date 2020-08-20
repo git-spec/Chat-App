@@ -33,8 +33,11 @@
         </main>
         <div class="chat-form-container">
             <nav>
-                <button class="btn"><i class="fas fa-file"></i></button>
-                <button class="btn"><i class="fas fa-file-image"></i></button>
+                 <!-- <button class="btn"><i class="fas fa-file"></i></button> -->
+                <label for="images">
+                   <button class="btn"><i class="fas fa-file-image"></i></button>
+                   <input type="file" id="image-upload" accept="image/x-png,image/gif,image/jpeg" />
+                </label>
                 <button class="btn"><i class="fas fa-arrow-alt-circle-right"></i></button>
             </nav>
             <form id="chat-form">
@@ -59,12 +62,45 @@
 
         console.log(roomName);
 
+        // Output old messages
         const oldmessages = '<%-oldMessages%>';
         const oldMessagesObj = JSON.parse(oldmessages)
         oldMessagesObj.forEach(element => {
             outputMessage(element)
         });
 
+        // upload images
+        document.querySelector('label > button').addEventListener('click', e => {
+            e.preventDefault();
+            // get file input for images
+            const imgsInp = document.getElementById('image-upload')
+            // activate file input
+            imgsInp.click();
+            // get image files
+            imgsInp.addEventListener('change', e => {
+                // create file reader object
+                const msg = new FileReader();
+                // check file size
+                if(msg && msg.size < (6 * 1024 * 1024)) { // 6 MB
+                    // get image name
+                    const filename = e.target.files[0].name;
+                    // will be executed when the file finished uploading
+                    msg.onload = e => {
+                        // this will take each part of the image
+                    const base64 = e.target.result.replace(/.*base64,/, '');
+                        // sent to server
+                        socket.emit('image',{base64, filename});
+                    }
+                    // read image and divide it in many parts
+                    msg.readAsDataURL(e.target.files[0]);
+                } else {
+                    //Prevent default and display error
+                    e.preventDefault();
+                    alert('Only a maximal size of 6 MB is allowed.')
+                }
+            }, false);
+            return
+        });
         // Get username and room from URL
         // const { username, room } = Qs.parse(location.search, {
         //   ignoreQueryPrefix: true
@@ -76,10 +112,10 @@
         const socket = io();
 
         // Join chatroom
-        socket.emit('joinRoom', { username, room });
+        socket.emit('joinRoom', {username, room});
 
         // Get room and users
-        socket.on('roomUsers', ({ room, users }) => {
+        socket.on('roomUsers', ({room, users}) => {
             outputRoomName(room);
             outputUsers(users);
         });
@@ -93,14 +129,14 @@
             chatMessages.scrollTop = chatMessages.scrollHeight;
         });
 
-        // Message submit
+        // submit text message
         chatForm.addEventListener('submit', e => {
             e.preventDefault();
-            // Get message text
+            // get text message
             const msg = e.target.elements.msg.value;
-            // Emit message to server
+            // send out text message to server
             socket.emit('chatMessage', msg);
-            // Clear input
+            // clear input
             e.target.elements.msg.value = '';
             e.target.elements.msg.focus();
         });
@@ -109,7 +145,12 @@
         function outputMessage(message) {
             const div = document.createElement('div');
             div.classList.add('message');
-            div.innerHTML = `<p class="meta">${message.username} <span>${message.time}</span></p><p class="text">${message.text}</p>`;
+            //
+            if (message.text.startsWith("/upload")) {
+                div.innerHTML = `<p class="meta">${message.username} <span>${message.time}</span></p><image id="image" src="${message.text}" />`;
+            } else {
+                div.innerHTML = `<p class="meta">${message.username} <span>${message.time}</span></p><p class="text">${message.text}</p>`;
+            };
             document.querySelector('.chat-messages').appendChild(div);
         };
 

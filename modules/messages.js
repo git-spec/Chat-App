@@ -23,7 +23,10 @@ function getMessages(roomName) {
               INNER JOIN users ON messages.userID = users.ID
               WHERE rooms.room LIKE '${roomName}' ORDER BY message_time
     `).then(messages => {
-      resolve(messages);
+      resolve(messages.map(message => {
+        message.message = message.message.toString();
+        return message;
+      }));
     }).catch(err => {
       reject(err);
     });

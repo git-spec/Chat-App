@@ -196,6 +196,10 @@ nav #image-upload {
 	margin-bottom: .8rem;
 }
 
+.form-control #createRoomInput {
+	margin: 0;
+}
+
 /* Join Page */
 .join-container {
 	max-width: 500px;

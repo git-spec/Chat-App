@@ -41,7 +41,7 @@
                 <button class="btn"><i class="fas fa-arrow-alt-circle-right"></i></button>
             </nav>
             <form id="chat-form">
-                <input id="msg" type="text" class="emoji" placeholder="Enter Message" required autocomplete="off"/>
+                <input id="msg-inp" type="text" class="emoji" placeholder="Enter Message" required autocomplete="off"/>
                 <button class="btn"><i class="fas fa-paper-plane"></i></button>
             </form>
         </div>
@@ -81,40 +81,37 @@
             e.preventDefault();
             window.location = '/logout';
         });
+
         // upload images
+        const imgsInp = document.getElementById('image-upload');
+        // activate file input
         document.querySelector('label > button').addEventListener('click', e => {
             e.preventDefault();
-            // get file input for images
-            const imgsInp = document.getElementById('image-upload');
-            // activate file input
             imgsInp.click();
-            // get image files
-            imgsInp.addEventListener('change', e => {
-                // create file reader object
-                const msg = new FileReader();
-                const file = e.target.files[0];
-                const filename = e.target.files[0].name;
-                const filesize = e.target.files[0].size;
-                // check if filesize is smaller than 6 MB
-                if(file && filesize < (1 * 1024 * 1024)) {
-                    // will be executed when the file finished uploading
-                    msg.onload = e => {
-                        // clear file input
-                        imgsInp.value = '';
-                        // this will take each part of the image
-                        const base64 = e.target.result.replace(/.*base64,/, '');
-                        // sent to server
-                        socket.emit('image',{base64, filename, username, room, roomID});
-                    };
-                    // read image and divide it in many parts
-                    msg.readAsDataURL(file);
-                } else {
-                    // prevent default and display error
-                    e.preventDefault();
-                    alert('Only a maximum size of 6 MB is allowed');
+        });
+        // get image files
+        imgsInp.addEventListener('change', e => {
+            // create file reader object
+            const fr = new FileReader();
+            const file = e.target.files[0];
+            const filename = e.target.files[0].name;
+            const filesize = e.target.files[0].size;
+            // check if filesize is smaller than 6 MB
+            if(file && filesize < (6 * 1024 * 1024)) {
+                // will be executed when the file finished uploading
+                fr.onload = e => {
+                    // this will take each part of the image
+                    const base64 = e.target.result.replace(/.*base64,/, '');
+                    // sent to server
+                    socket.emit('image',{base64, filename, username, room, roomID});
                 };
-            }, false);
-            return
+                // read image and divide it in many parts
+                fr.readAsDataURL(file);
+            } else {
+                // prevent default and display error
+                e.preventDefault();
+                alert('Only a maximum size of 6 MB is allowed');
+            };
         });
 
 /* ************************************************************ SOCKET.IO ******************************************************* */

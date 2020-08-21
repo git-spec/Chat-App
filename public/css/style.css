@@ -114,7 +114,7 @@ nav #image-upload {
 	overflow: hidden;
 }
 
-#image {
+.image {
 	max-width: 100%;
 }
 

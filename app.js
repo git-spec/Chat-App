@@ -13,7 +13,7 @@ const entities = new Entities();
 // modules
 const {
   insertMessage,
-  getMessage,
+  // getMessage,
   formatMessage,
   getMessages
 } = require('./modules/messages');
@@ -77,7 +77,7 @@ io.on('connection', socket => {
       // welcome current user
       socket.emit('message', formatMessage(botName, 'Welcome to ChatApp!'));
       // broadcast when a user connects
-      socket.broadcast.to(user.room).emit('message', formatMessage(botName, `${user.username} has joined the chat`));
+      socket.broadcast.to(user.room).emit('message', formatMessage(botName, `${user.username} has joined the chat.`));
       // get the current users in this room from db
       getUsersRoom(user.room).then(users => {
         const usersArr = [];
@@ -116,11 +116,9 @@ io.on('connection', socket => {
     // set new filename from roomname, userID and timestamp
     const newFilename = room.trim().replace(/ /g, '_') + '_' + userID + '_' + Date.now() + ext;
     // set image URL
-    const imgUrl = '/upload/' + filename;
+    const imgUrl = '/upload/' + newFilename;
     // set image path
-    const imgPath = './public/upload/' + filename;
-    console.log(imgUrl);
-    console.log(imgPath);
+    const imgPath = './public/upload/' + newFilename;
     // buffer image file
     const buffer = Buffer.from(base64, 'base64');
     // get filesize of image in MB
@@ -132,7 +130,7 @@ io.on('connection', socket => {
         if (err) {
           console.log(err);
         } else {
-          console.log('image saved');
+          console.log('Image is saved.');
         };
       });
       // save message to db

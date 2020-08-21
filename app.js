@@ -87,10 +87,10 @@ io.on('connection', socket => {
         // send users and room info
         io.to(user.room).emit('roomUsers', {room: user.room, users: usersArr});
       }).catch(err => {
-        console.log(err);
+        socket.emit('message', formatMessage(botName, 'Error! Not able to ???!'));
       });
     }).catch(err => {
-      console.log(err);
+      socket.emit('message', formatMessage(botName, 'Error! Not able to ???!'));
     });  
   });
 
@@ -103,7 +103,7 @@ io.on('connection', socket => {
     insertMessage(entities.encode(user.msg), user.userID, user.roomID).then(() => {
       io.to(user.room).emit('message', formatMessage(user.username, user.msg));
     }).catch(err => {
-      console.log(err);
+      socket.emit('message', formatMessage(botName, 'Error! Not able to save message!'));
     });
   });
 
@@ -128,7 +128,7 @@ io.on('connection', socket => {
       // save image into upload folder
       await fs.writeFile(imgPath, buffer, err => {
         if (err) {
-          console.log(err);
+          socket.emit('message', formatMessage(botName, 'Error! Not able to save image!'));
         } else {
           console.log('Image is saved.');
         };
@@ -137,7 +137,7 @@ io.on('connection', socket => {
       insertMessage(imgUrl, user.userID, user.roomID).then(() => {
         io.to(user.room).emit('message', formatMessage(user.username, imgUrl));
       }).catch(err => {
-        console.log(err);
+        socket.emit('message', formatMessage(botName, 'Error! Not able to save image!'));
       });
     };
   });

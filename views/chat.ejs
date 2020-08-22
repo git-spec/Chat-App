@@ -41,7 +41,7 @@
                 <button class="btn"><i class="fas fa-arrow-alt-circle-right"></i></button>
             </nav>
             <form id="chat-form">
-                <input id="msg" type="text" class="emoji" placeholder="Enter Message" required autocomplete="off"/>
+                <input id="msgInp" type="text" class="emoji" placeholder="Enter Message" required autocomplete="off"/>
                 <button class="btn"><i class="fas fa-paper-plane"></i></button>
             </form>
         </div>
@@ -54,117 +54,23 @@
     <script src="/socket.io/socket.io.js"></script>
     <script src="/js/emojiPicker.js"></script>
     <script>
-        //emoji.initiate();
+/* ************************************************************ VARIABLES ******************************************************* */
         const chatForm = document.getElementById('chat-form');
         const chatMessages = document.querySelector('.chat-messages');
         const roomName = document.getElementsByClassName('room-name');
         const userList = document.getElementById('users');
-
-        console.log(roomName);
-
-        // Output old messages
+        // user variables
+        const username = '<%=username%>';
+        const room = '<%=chatRoom%>';
+        const roomID = '<%=roomID%>';
+        // output old messages
         const oldmessages = '<%-oldMessages%>';
-        const oldMessagesObj = JSON.parse(oldmessages)
+        const oldMessagesObj = JSON.parse(oldmessages);
         oldMessagesObj.forEach(element => {
-            outputMessage(element)
+            outputMessage(element);
         });
 
-        // upload images
-        document.querySelector('label > button').addEventListener('click', e => {
-            e.preventDefault();
-            // get file input for images
-            const imgsInp = document.getElementById('image-upload')
-            // activate file input
-            imgsInp.click();
-            // get image files
-            imgsInp.addEventListener('change', e => {
-                // create file reader object
-                const msg = new FileReader();
-                // check file size
-                if(msg && msg.size < (6 * 1024 * 1024)) { // 6 MB
-                    // get image name
-                    const filename = e.target.files[0].name;
-                    // will be executed when the file finished uploading
-                    msg.onload = e => {
-                        // this will take each part of the image
-                    const base64 = e.target.result.replace(/.*base64,/, '');
-                        // sent to server
-                        socket.emit('image',{base64, filename});
-                    }
-                    // read image and divide it in many parts
-                    msg.readAsDataURL(e.target.files[0]);
-                } else {
-                    //Prevent default and display error
-                    e.preventDefault();
-                    alert('Only a maximal size of 6 MB is allowed.')
-                }
-            }, false);
-            return
-        });
-        // Get username and room from URL
-        // const { username, room } = Qs.parse(location.search, {
-        //   ignoreQueryPrefix: true
-        // });
-
-        const username = '<%=username%>'
-        const room = '<%=chatRoom%>'
-
-        const socket = io();
-
-        // Join chatroom
-        socket.emit('joinRoom', {username, room});
-
-        // Get room and users
-        socket.on('roomUsers', ({room, users}) => {
-            outputRoomName(room);
-            outputUsers(users);
-        });
-
-        // Message from server
-        socket.on('message', message => {
-            console.log(message);
-            outputMessage(message);
-            
-            // Scroll down
-            chatMessages.scrollTop = chatMessages.scrollHeight;
-        });
-
-        // submit text message
-        chatForm.addEventListener('submit', e => {
-            e.preventDefault();
-            // get text message
-            const msg = e.target.elements.msg.value;
-            // send out text message to server
-            socket.emit('chatMessage', msg);
-            // clear input
-            e.target.elements.msg.value = '';
-            e.target.elements.msg.focus();
-        });
-
-        // Output message to DOM
-        function outputMessage(message) {
-            const div = document.createElement('div');
-            div.classList.add('message');
-            //
-            if (message.text.startsWith("/upload")) {
-                div.innerHTML = `<p class="meta">${message.username} <span>${message.time}</span></p><image id="image" src="${message.text}" />`;
-            } else {
-                div.innerHTML = `<p class="meta">${message.username} <span>${message.time}</span></p><p class="text">${message.text}</p>`;
-            };
-            document.querySelector('.chat-messages').appendChild(div);
-        };
-
-        // Add room name to DOM
-        function outputRoomName(room) {
-            for(let i = 0; i < roomName.length; i++) {
-                roomName[i].innerText = room;
-            };
-        };
-
-        // Add users to DOM
-        function outputUsers(users) {
-            userList.innerHTML = `${users.map(user => `<li>${user.username}</li>`).join('')}`;
-        };
+/* ************************************************************ EVENTS ******************************************************* */
         // leave room
         document.querySelector('nav > .btn:last-child').addEventListener('click', e => {
             e.preventDefault();
@@ -175,6 +81,90 @@
             e.preventDefault();
             window.location = '/logout';
         });
+
+        // upload images
+        const imgsInp = document.getElementById('image-upload');
+        // activate file input
+        document.querySelector('label > button').addEventListener('click', e => {
+            e.preventDefault();
+            imgsInp.click();
+        });
+        // get image files
+        imgsInp.addEventListener('change', e => {
+            // create file reader object
+            const fr = new FileReader();
+            const file = e.target.files[0];
+            const filename = e.target.files[0].name;
+            const filesize = e.target.files[0].size;
+            // check if filesize is smaller than 6 MB
+            if(file && filesize < (6 * 1024 * 1024)) {
+                // will be executed when the file finished uploading
+                fr.onload = e => {
+                    // this will take each part of the image
+                    const base64 = e.target.result.replace(/.*base64,/, '');
+                    // sent to server
+                    socket.emit('image',{base64, filename, username, room, roomID});
+                };
+                // read image and divide it in many parts
+                fr.readAsDataURL(file);
+            } else {
+                // prevent default and display error
+                e.preventDefault();
+                alert('Only a maximum size of 6 MB is allowed');
+            };
+        });
+
+/* ************************************************************ SOCKET.IO ******************************************************* */
+        // initiate socket
+        const socket = io();
+        // join chatroom
+        socket.emit('joinRoom', { username, room, roomID });
+        // get room and users
+        socket.on('roomUsers', ({ room, users }) => {
+            outputRoomName(room);
+            outputUsers(users);
+        });
+        // get message from server
+        socket.on('message', message => {
+            outputMessage(message);
+            // scroll down
+            chatMessages.scrollTop = chatMessages.scrollHeight;
+        });
+        // submit message 
+        chatForm.addEventListener('submit', e => {
+            e.preventDefault();
+            // get message text
+            const msg = e.target.elements.msgInp.value;
+            // emit message to server
+            socket.emit('chatMessage', {msg, username, room, roomID});
+            // clear input
+            e.target.elements.msgInp.value = '';
+            e.target.elements.msgInp.focus();
+        });
+
+/* ************************************************************ FUNCTIONS ******************************************************* */
+        // output message to DOM
+        function outputMessage(message) {
+            const div = document.createElement('div');
+            div.classList.add('message');
+            // check if message is image URL
+            if (message.text.startsWith("/upload")) {
+                div.innerHTML = `<p class="meta">${message.username} <span>${message.time}</span></p><image class="image" src="${message.text}" />`;
+            } else {
+                div.innerHTML = `<p class="meta">${message.username} <span>${message.time}</span></p><p class="text">${message.text}</p>`;
+            };
+            document.querySelector('.chat-messages').appendChild(div);
+        };
+        // add room name to DOM
+        function outputRoomName(room) {
+            for(let i = 0; i < roomName.length; i++) {
+                roomName[i].innerText = room;
+            };
+        };
+        // add users to DOM
+        function outputUsers(users) {
+            userList.innerHTML = `${users.map(user => `<li>${user}</li>`).join('')}`;
+        };
     </script>
     </body>
 </html>

@@ -114,7 +114,7 @@ nav #image-upload {
 	overflow: hidden;
 }
 
-#image {
+.image {
 	max-width: 100%;
 }
 
@@ -194,6 +194,10 @@ nav #image-upload {
 
 .form-control > input {
 	margin-bottom: .8rem;
+}
+
+.form-control #createRoomInput {
+	margin: 0;
 }
 
 /* Join Page */

@@ -27,7 +27,7 @@ const {
 const {
   getRooms,
   getRoom,
-  getRoomByUserID,
+  getRoomAndUser,
   createRoom
 } = require('./modules/rooms');
 
@@ -36,14 +36,26 @@ const server = http.createServer(app);
 const io = socketio(server);
 
 // session
-const session = require('express-session')({
+// const session = require('express-session')({
+//   secret: "chat",
+//   resave: true,
+//   saveUninitialized: true
+// });var sharedsession = require("express-socket.io-session");
+// app.use(session);
+// io.use(sharedsession(session, {
+//   autoSave:true
+// }));
+
+// const session = require('express-session');
+// app.use(session({
+//   secret: 'chat',
+//   cookie: {}
+// }));
+const session = require('express-session');
+app.use(session({
   secret: "chat",
   resave: true,
   saveUninitialized: true
-});var sharedsession = require("express-socket.io-session");
-app.use(session);
-io.use(sharedsession(session, {
-  autoSave:true
 }));
 
 // set static folder
@@ -66,12 +78,11 @@ const botName = 'ChatApp Bot';
 io.on('connection', socket => {
 
   // join to chatroom
-  socket.on('joinRoom', ({username, room, roomID}) => {
-    const userID = socket.handshake.session.userID;
+  socket.on('joinRoom', ({username, userID, room, roomID}) => {
     // create user object
     const user = {username, userID, room, roomID};
     // combine userID and roomID and store their relation into db
-    joinUsersRoom(user.userID, user.roomID).then(() => {
+    joinUsersRoom(user.userID, user.roomID, socket.id).then(() => {
       // subscribe to a given channel
       socket.join(user.room);
       // welcome current user
@@ -87,18 +98,19 @@ io.on('connection', socket => {
         // send users and room info
         io.to(user.room).emit('roomUsers', {room: user.room, users: usersArr});
       }).catch(err => {
-        socket.emit('message', formatMessage(botName, 'Error! Not able to ???!'));
+        // send an empty array of users because db request failed
+        io.to(user.room).emit('roomUsers', {room: user.room, users: []});
       });
     }).catch(err => {
-      socket.emit('message', formatMessage(botName, 'Error! Not able to ???!'));
-    });  
+      // db is not able to save user & room relation and sends user back to room page
+      socket.emit('redirect');
+    });
   });
 
   // listen for chatMessage
-  socket.on('chatMessage', ({msg, username, room, roomID}) => {
-    const userID = socket.handshake.session.userID;
+  socket.on('chatMessage', ({msg, username, userID, room, roomID}) => {
+    // const userID = socket.handshake.session.userID;
     const user = {msg, username, userID, room, roomID};
-    // validate message
     // save message to db
     insertMessage(entities.encode(user.msg), user.userID, user.roomID).then(() => {
       io.to(user.room).emit('message', formatMessage(user.username, user.msg));
@@ -108,8 +120,8 @@ io.on('connection', socket => {
   });
 
   // listen for image
-  socket.on('image', async ({base64, filename, username, room, roomID}) => {
-    const userID = socket.handshake.session.userID;
+  socket.on('image', async ({base64, filename, username, userID, room, roomID}) => {
+    // const userID = socket.handshake.session.userID;
     const user = {username, userID, room, roomID};
     // get extension from file
     const ext = filename.substr(filename.lastIndexOf('.'));
@@ -130,42 +142,48 @@ io.on('connection', socket => {
         if (err) {
           socket.emit('message', formatMessage(botName, 'Error! Not able to save image!'));
         } else {
-          console.log('Image is saved.');
+          // save message to db
+          insertMessage(imgUrl, user.userID, user.roomID).then(() => {
+            io.to(user.room).emit('message', formatMessage(user.username, imgUrl));
+          }).catch(err => {
+            socket.emit('message', formatMessage(botName, 'Error! Not able to save image to db!'));
+            // delete image from upload folder if image Url is not saved to db
+            fs.unlinkSync(imgPath);
+          });
         };
-      });
-      // save message to db
-      insertMessage(imgUrl, user.userID, user.roomID).then(() => {
-        io.to(user.room).emit('message', formatMessage(user.username, imgUrl));
-      }).catch(err => {
-        socket.emit('message', formatMessage(botName, 'Error! Not able to save image!'));
       });
     };
   });
 
   // runs when client disconnects
   socket.on('disconnect', () => {
-    const user = socket.handshake.session.user;
-    const userID = socket.handshake.session.userID;
-    // get room by userID from db
-    getRoomByUserID(userID).then(room => {
-      const roomname = room[0].room;
-      // deletes user & room correlation from database when user lefts the room
-      leaveUsersRoom(userID, room[0].ID).then(() => {
+    // get room and user by socketID from db
+    getRoomAndUser(socket.id).then(result => {
+      const room = result[0].room;
+      const username = result[0].username
+      // delete user & room correlation from database when user lefts the room
+      leaveUsersRoom(socket.id).then(() => {
         // get the current users in this room from db
-        getUsersRoom(roomname).then(users => {
+        getUsersRoom(room).then(users => {
           const usersArr = [];
           users.forEach(user => {
             usersArr.push(user.username);
           });
           // send info to chatroom that user has left the chat
-          io.to(roomname).emit('message', formatMessage(botName, `${user} has left the chat`));
+          io.to(room).emit('message', formatMessage(botName, `${username} has left the chat.`));
           // send users and room info
-          io.to(roomname).emit('roomUsers', {room: roomname, users: usersArr});
+          io.to(room).emit('roomUsers', {room: room, users: usersArr});
         }).catch(err => {
-          console.log(err);
+          // send info to chatroom that user has left the chat
+          io.to(room).emit('message', formatMessage(botName, `${username} has left the chat.`));
+          // send an empty array of users because db request failed
+          io.to(room).emit('roomUsers', {room: room, users: []});
         });
       }).catch(err => {
-        console.log(err);
+        // send info to chatroom that user has left the chat
+        io.to(room).emit('message', formatMessage(botName, `${username} has left the chat.`));
+        // send an empty array of users because db request failed
+        io.to(room).emit('roomUsers', {room: room, users: []});
       });
     }).catch(err => {
       console.log(err);
@@ -291,13 +309,12 @@ app.get('/chat/:room', (req, res) => {
             });
           });
           // render room chat with old messages
-          res.render('chat', {username: req.session.user, chatRoom: req.params.room, roomID, oldMessages: JSON.stringify(msgs)});
+          res.render('chat', {username: req.session.user, userID: req.session.userID, room: req.params.room, roomID, oldMessages: JSON.stringify(msgs)});
         }).catch(err => {
           // render room chat without old messages
-          res.render('chat', {username: req.session.user, chatRoom: req.params.room, roomID, oldMessages: JSON.stringify([])});
+          res.render('chat', {username: req.session.user, userID: req.session.userID, room: req.params.room, roomID, oldMessages: JSON.stringify([])});
         });
       }).catch(err => {
-        console.log(err);
         res.redirect('/room');
       });
     } else {

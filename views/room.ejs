@@ -78,14 +78,22 @@
 			// join created room
             document.querySelector('#joinCreatedRoom').addEventListener('click', e => {
 				e.preventDefault();
-				const roomName = document.querySelector('#createRoomInput').value.trim();
-				if (roomName) {
+				// trim and replace _ from the inserted roomname
+				const roomName = document.querySelector('#createRoomInput').value.trim().replace(/ /g, "_");
+				// special characters like \ ' " < > & are not allowed for a roomname  
+				if (roomName.search(/\\/) !== -1 || roomName.search("'") !== -1 || roomName.search('"') !== -1 || roomName.search("<") !== -1 || roomName.search(">") !== -1 || roomName.search("&") !== -1) {
+					alert("Please don't use special characters!");
+				// a roomname longer than 20 characters is not allowed  
+				} else if (roomName.length > 20) {
+					alert("Please enter a shorter Roomname!");
+				// fetch the roomname if it is valid
+				} else if (roomName) {
 					fetch('/room', {
 						method: 'post',
 						headers: {
 							'Content-Type': 'application/json'
 						},
-						body: JSON.stringify({ roomname: roomName }),
+						body: JSON.stringify({roomname: roomName}),
 					}).then(response => {
 						if (response.status == 200) {
 							response.json().then(data => {
@@ -94,29 +102,30 @@
 									window.location = `/chat/${roomName}`;
 									break;
 								case 2:
-									alert("This room already exists\n Please choose another name");
+									alert("This room already exists!\nPlease choose another name!");
 									break;
 								case 3:
-									alert("Creating a room was not successful");
+									alert("Creating a room was not successful!");
 									break;
 								case 4:
-									alert("Server error");
+									alert("Server error!");
 									break;
 								default:
-									alert("Server error");
+									alert("Server error!");
 									break;
 								};
 							}).catch(err => {
 								alert(err.message);
 							});
 						} else {
-							alert("Server error");
+							alert("Server error!");
 						};
 					}).catch(err => {
 						alert(err.message);
 					});
+				// alert if input is empty
 				} else {
-					alert("Please enter a Roomname");
+					alert("Please enter a Roomname!");
 				};
 			});
         </script>

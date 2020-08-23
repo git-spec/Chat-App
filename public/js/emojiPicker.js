@@ -67,8 +67,8 @@ class EmojiPicker {
 
     const emojiTrigger = document.createElement("a");
     emojiTrigger.style.position = "absolute";
-    emojiTrigger.style.top = "4px";
-    emojiTrigger.style.right = "4px";
+    emojiTrigger.style.top = "8px";
+    emojiTrigger.style.right = "8px";
     emojiTrigger.style.textDecoration = "none";
     emojiTrigger.style.color = "#667aff";
     emojiTrigger.setAttribute("href", "javascript:void(0)");

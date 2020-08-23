@@ -8,7 +8,7 @@ function insertMessage(message, userID, roomID) {
               INSERT INTO messages (message, userID, roomID)
               Values ('${message.replace(/\\/g, "&#92;")}', ${userID}, ${roomID})
     `).then(() => {
-      resolve();
+      resolve(message);
     }).catch(err => {
       reject(err);
     });

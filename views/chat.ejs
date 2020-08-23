@@ -54,6 +54,18 @@
     <script src="/socket.io/socket.io.js"></script>
     <script src="/js/emojiPicker.js"></script>
     <script>
+/* ************************************************************ SETUP ******************************************************* */
+        // get viewheight and set to pixel
+        function setDocHeight() {
+            document.documentElement.style.setProperty('--vh', `${window.innerHeight/100}px`);
+        };
+        window.addEventListener('resize', function () {
+            setDocHeight();
+        });
+        window.addEventListener('orientationchange', function () {
+            setDocHeight();
+        });
+        setDocHeight();
 /* ************************************************************ VARIABLES ******************************************************* */
         const chatForm = document.getElementById('chat-form');
         const chatMessages = document.querySelector('.chat-messages');
@@ -61,7 +73,8 @@
         const userList = document.getElementById('users');
         // user variables
         const username = '<%=username%>';
-        const room = '<%=chatRoom%>';
+        const userID = '<%=userID%>';
+        const room = '<%=room%>';
         const roomID = '<%=roomID%>';
         // output old messages
         const oldmessages = '<%-oldMessages%>';
@@ -103,7 +116,7 @@
                     // this will take each part of the image
                     const base64 = e.target.result.replace(/.*base64,/, '');
                     // sent to server
-                    socket.emit('image',{base64, filename, username, room, roomID});
+                    socket.emit('image',{base64, filename, username, userID, room, roomID});
                 };
                 // read image and divide it in many parts
                 fr.readAsDataURL(file);
@@ -118,9 +131,9 @@
         // initiate socket
         const socket = io();
         // join chatroom
-        socket.emit('joinRoom', { username, room, roomID });
+        socket.emit('joinRoom', {username, userID, room, roomID});
         // get room and users
-        socket.on('roomUsers', ({ room, users }) => {
+        socket.on('roomUsers', ({room, users}) => {
             outputRoomName(room);
             outputUsers(users);
         });
@@ -136,10 +149,15 @@
             // get message text
             const msg = e.target.elements.msgInp.value;
             // emit message to server
-            socket.emit('chatMessage', {msg, username, room, roomID});
+            socket.emit('chatMessage', {msg, username, userID, room, roomID});
             // clear input
             e.target.elements.msgInp.value = '';
             e.target.elements.msgInp.focus();
+        });
+        // redirect
+        socket.on('redirect', () => {
+            alert('Not able to join the chatroom!\nPlease try again later!');
+            window.location = '/';
         });
 
 /* ************************************************************ FUNCTIONS ******************************************************* */

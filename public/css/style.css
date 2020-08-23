@@ -214,6 +214,7 @@ nav #image-upload {
 	color: #fff;
 	background-image: url(../images/wireframe_blurred.png);
 	background-size: cover;
+	border-radius: 10px;
 }
 
 .join-header {
@@ -312,7 +313,8 @@ nav #image-upload {
 		font-size: 12px;
 	}
 
-	nav > .btn {
+/*	nav > .btn {
 		margin: 0 12px;
 	}
+*/
 }

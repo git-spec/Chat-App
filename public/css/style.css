@@ -1,8 +1,10 @@
 @import url('https://fonts.googleapis.com/css?family=Roboto&display=swap');
 
 :root {
-	--dark-color-a: #667aff;
-	--dark-color-b: #8a9aff;
+	/*--dark-color-a: #667aff;*/
+	--dark-color-a: #000000;
+	/*--dark-color-b: #8a9aff;*/
+	--dark-color-b: #632480;
 	--light-color: #e6e9ff;
 	--success-color: #5cb85c;
 	--error-color: #d9534f;
@@ -33,7 +35,7 @@ a {
 	cursor: pointer;
 	padding: 5px 15px;
 	background: var(--light-color);
-	color: var(--dark-color-a);
+	color: var(--dark-color-b);
 	border-color: var(--dark-color-a);
 	font-size: 16px;
 	height: 40px;
@@ -65,10 +67,13 @@ fieldset > a {
 	background: #fff;
 	margin: 30px auto;
 	overflow: hidden;
+	background-image: url(../images/wireframe_blurred.png);
+	background-size: cover;
+	border-radius: 10px;
 }
 
 .chat-header {
-	background: var(--dark-color-a);
+	/*background: var(--dark-color-a);*/
 	color: #fff;
 	border-top-left-radius: 5px;
 	border-top-right-radius: 5px;
@@ -84,17 +89,17 @@ fieldset > a {
 }
 
 nav {
-	background: var(--dark-color-a);
+	/*background: var(--dark-color-a);*/
 	color: #fff;
 	padding-bottom: 15px;
 	display: flex;
 	align-items: center;
 	text-align: center;
-	justify-content: flex-end;
+	justify-content: space-between;
 }
 
 nav .btn {
-	margin: 0 18px;
+	/*margin: 0 18px;*/
 	position: relative;
 }
 
@@ -124,7 +129,8 @@ nav #image-upload {
 }
 
 .chat-sidebar {
-	background: var(--dark-color-a);
+	max-height: 500px;
+	/*background: var(--dark-color-a);*/
 	color: #fff;
 	padding: 20px 20px 60px;
 	overflow-y: scroll;
@@ -149,6 +155,7 @@ nav #image-upload {
 	padding: 30px;
 	max-height: 500px;
 	overflow-y: scroll;
+	background-color: white;
 }
 
 .chat-messages .message {
@@ -177,7 +184,7 @@ nav #image-upload {
 
 .chat-form-container {
 	padding: 20px 30px;
-	background-color: var(--dark-color-a);
+	/*background-color: var(--dark-color-a);*/
 }
 
 .chat-form-container form {
@@ -205,12 +212,14 @@ nav #image-upload {
 	max-width: 500px;
 	margin: 80px auto;
 	color: #fff;
+	background-image: url(../images/wireframe_blurred.png);
+	background-size: cover;
 }
 
 .join-header {
 	text-align: center;
 	padding: 20px;
-	background: var(--dark-color-a);
+	/*background: var(--dark-color-a);*/
 	border-top-left-radius: 5px;
 	border-top-right-radius: 5px;
 	position: relative;
@@ -224,7 +233,7 @@ nav #image-upload {
 
 .join-main {
 	padding: 30px 40px;
-	background: var(--dark-color-a);
+	/*background: var(--dark-color-a);*/
 }
 
 .join-main p {
@@ -263,11 +272,17 @@ nav #image-upload {
 
 @media (max-width: 700px) {
 	body {
+		background-image: url(../images/wireframe_blurred.png);
+		background-size: cover;
 		margin: 0;
 	}
 
 	.chat-container {
 		margin: auto;
+		border-radius: 0;
+		height: 100%;
+		height: 100vh;
+		height: calc(var(--vh, 1vh) * 100);
 	}
 
 	.chat-main {
@@ -282,6 +297,15 @@ nav #image-upload {
 	
 	.chat-sidebar {
 		display: none;
+	}
+
+	.chat-messages {
+		min-height: calc(var(--vh, 1vh) * 100 - 70px - 135px);
+		max-height: calc(var(--vh, 1vh) * 100 - 70px - 135px);
+	}
+
+	.join-container {
+		background-image: none;
 	}
 
 	.btn {

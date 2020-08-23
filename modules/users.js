@@ -46,9 +46,9 @@ function loginUser(username, password) {
 };
 
 // connect user with room
-function joinUsersRoom(userID, roomID) {
+function joinUsersRoom(userID, roomID, socketID) {
   return new Promise((resolve, reject) => {
-    runQuery(`INSERT INTO users_room (userID, roomID) VALUES (${userID}, ${roomID})`).then(() => {
+    runQuery(`INSERT INTO users_room (userID, roomID, socketID) VALUES (${userID}, ${roomID}, '${socketID}')`).then(() => {
       resolve();
     }).catch(err => {
       reject(err);
@@ -57,9 +57,9 @@ function joinUsersRoom(userID, roomID) {
 };
 
 // user leaves room
-function leaveUsersRoom(userID, roomID) {
+function leaveUsersRoom(socketID) {
   return new Promise((resolve, reject) => {
-    runQuery(`DELETE FROM users_room WHERE userID=${userID} AND roomID=${roomID}`).then(() => {
+    runQuery(`DELETE FROM users_room WHERE socketID='${socketID}'`).then(() => {
       resolve();
     }).catch(err => {
       reject(err);
@@ -67,7 +67,7 @@ function leaveUsersRoom(userID, roomID) {
   });
 };
 
-// 
+// get users from a specific room
 function getUsersRoom(room) {
   return new Promise((resolve, reject) => {
     runQuery(`

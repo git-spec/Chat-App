@@ -3,7 +3,7 @@ function passwordDB() {
 };
 
 function passwordEmail() {
-    return 'In04Fi01!'
+    return 'password'
 };
 
 module.exports = {

@@ -35,7 +35,7 @@ a {
 	cursor: pointer;
 	padding: 5px 15px;
 	/*background: var(--light-color);*/
-	background: none;
+	background-color: black;
 	color: var(--light-color);
 	/*border-color: var(--dark-color-a);*/
 	border: 2px solid var(--light-color);
@@ -77,8 +77,10 @@ fieldset > a {
 	margin: 30px auto;
 	overflow: hidden;
 	background-image: url(../images/pattern.png);
+	background-position: center;
+	background-repeat: no-repeat;
 	background-color: black;
-	background-size: contain;
+	background-size: cover;
 	border-radius: 10px;
 }
 
@@ -260,7 +262,10 @@ nav #image-upload {
 	margin: 80px auto;
 	color: #fff;
 	background-image: url(../images/pattern.png);
-	background-size: contain;
+	background-image: url(../images/pattern.png);
+	background-repeat: no-repeat;
+	background-size: 1000px 800px;
+	background-position-x: right;
 	border-radius: 10px;
 }
 
@@ -327,6 +332,9 @@ nav #image-upload {
 
 	body {
 		background-image: url(../images/pattern.png);
+		background-image: url(../images/pattern.png);
+		background-color: black;
+		background-size: cover;
 		background-size: 100% 100%;
 		margin: 0;
 	}

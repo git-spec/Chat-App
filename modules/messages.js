@@ -21,7 +21,8 @@ function getMessages(roomName) {
               SELECT messages.*, users.username as username FROM messages
               INNER JOIN rooms ON messages.roomID = rooms.ID
               INNER JOIN users ON messages.userID = users.ID
-              WHERE rooms.room LIKE '${roomName}' ORDER BY message_time
+              WHERE rooms.room LIKE '${roomName}' 
+              ORDER BY message_time LIMIT 8
     `).then(messages => {
       resolve(messages.map(message => {
         message.message = message.message.toString();

@@ -22,7 +22,8 @@ const {
   loginUser,
   joinUsersRoom,
   leaveUsersRoom,
-  getUsersRoom
+  getUsersRoom,
+  verifyUser
 } = require('./modules/users');
 const {
   getRooms,
@@ -52,6 +53,7 @@ const io = socketio(server);
 //   cookie: {}
 // }));
 const session = require('express-session');
+const runQuery = require('./modules/connection');
 app.use(session({
   secret: "chat",
   resave: true,
@@ -105,6 +107,43 @@ io.on('connection', socket => {
       // db is not able to save user & room relation and sends user back to room page
       socket.emit('redirect');
     });
+  });
+
+  // listen for old messages
+  socket.on('old-messages', ({room}) => {
+console.log('room/oldMsgs:', room);
+    let num = 8;
+    // get history of messages from db
+    if (room) {
+      num += 8;
+      getMessages(room).then(messages => {
+console.log('get messages:', messages);
+        const msgs = [];
+        messages.forEach(msg => {
+          msgs.push({
+            username: msg.username,
+            text: msg.message,
+            time: moment(msg.message_time).format('DD.MM.YY H:mm')
+          });
+          socket.emit('history', formatMessage(msg.username, msg.message))
+        });
+      }).catch(err => {
+        console.log(err);
+      });
+    };
+/*    getMessages(room).then(messages => {
+      const msgs = [];
+      messages.forEach(msg => {
+        msgs.push({
+          username: msg.username,
+          text: msg.message,
+          time: moment(msg.message_time).format('DD.MM.YY H:mm')
+        });
+      });
+    });
+    // send info to chatroom that user has left the chat
+    io.to(room).emit('message', formatMessage(botName, `${username} has left the chat.`));
+*/
   });
 
   // listen for chatMessage
@@ -216,6 +255,7 @@ app.post('/', (req, res) => {
   // 3 user not found
   // 4 server error
   // 5 missing entries
+  // 6 not verified
   if (firstname && lastname && username && email && password && password === repassword) {
     registerUser(firstname, lastname, username, email, password).then(() => {
       loginUser(username, password).then(user => {
@@ -251,6 +291,15 @@ app.post('/', (req, res) => {
   } else {
     res.json(5);
   };
+});
+
+// verify user
+app.get('/verify/:userID', (req, res) => {
+  verifyUser(req.params.userID).then(() => {
+    res.json('verified');
+  }).catch(err => {
+    console.log(err);
+  });
 });
 
 // route to room
@@ -309,10 +358,10 @@ app.get('/chat/:room', (req, res) => {
             });
           });
           // render room chat with old messages
-          res.render('chat', {username: req.session.user, userID: req.session.userID, room: req.params.room, roomID, oldMessages: JSON.stringify(msgs)});
+          res.render('chat', {username: req.session.user, userID: req.session.userID, room: req.params.room, roomID, oldmessages: JSON.stringify(msgs)});
         }).catch(err => {
           // render room chat without old messages
-          res.render('chat', {username: req.session.user, userID: req.session.userID, room: req.params.room, roomID, oldMessages: JSON.stringify([])});
+          res.render('chat', {username: req.session.user, userID: req.session.userID, room: req.params.room, roomID, oldmessages: JSON.stringify([])});
         });
       }).catch(err => {
         res.redirect('/room');

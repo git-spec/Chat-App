@@ -34,11 +34,20 @@ a {
 .btn {
 	cursor: pointer;
 	padding: 5px 15px;
-	background: var(--light-color);
-	color: var(--dark-color-b);
-	border-color: var(--dark-color-a);
+	/*background: var(--light-color);*/
+	background: none;
+	color: var(--light-color);
+	/*border-color: var(--dark-color-a);*/
+	border: 2px solid var(--light-color);
+	border-radius: 6px;
 	font-size: 16px;
 	height: 40px;
+}
+
+.btn:active {
+	background: var(--light-color);
+	color: black;
+	border-inline-color: black;
 }
 
 fieldset {
@@ -67,7 +76,8 @@ fieldset > a {
 	background: #fff;
 	margin: 30px auto;
 	overflow: hidden;
-	background-image: url(../images/unsplash.png);
+	background-image: url(../images/pattern.png);
+	background-color: black;
 	background-size: cover;
 	border-radius: 10px;
 }
@@ -180,6 +190,11 @@ nav #image-upload {
 #chat-form > div{
 	height: 40px;
 	width: 100%;
+	margin-right: 1rem;
+}
+
+#chat-form > div > input {
+	border-radius: 6px;
 }
 
 .chat-form-container {
@@ -191,7 +206,7 @@ nav #image-upload {
 	display: flex;
 }
 
-.chat-form-container input[type='text'] {
+.chat-form-container input[type="text"] {
 	font-size: 16px;
 	padding: 5px;
 	height: 40px;
@@ -201,6 +216,38 @@ nav #image-upload {
 
 .form-control > input {
 	margin-bottom: .8rem;
+}
+
+.form-control > label[for="password"] {
+	float: left;
+}
+
+.form-control > div {
+	display: flex;
+	justify-content: space-between;
+	padding-right: 40px;
+}
+
+.form-control > div > div {
+	width: 60px;
+	height: 16px;
+	background-color: var(--error-color);
+	position: relative;
+	display: none;
+}
+
+.form-control > div > div::before {
+	content: "Safety";
+	color: white;
+	position: absolute;
+	left: -54px;
+}
+
+.form-control > div > div::after {
+	content: "30%";
+	color: white;
+	position: absolute;
+	right: -40px;
 }
 
 .form-control #createRoomInput {
@@ -257,6 +304,7 @@ nav #image-upload {
 	padding: 5px;
 	height: 40px;
 	width: 100%;
+	border-radius: 6px;
 }
 
 .join-main select {
@@ -264,6 +312,7 @@ nav #image-upload {
 	padding: 5px;
 	height: 40px;
 	width: 100%;
+	border-radius: 6px;
 }
 
 .join-main .btn {
@@ -272,10 +321,24 @@ nav #image-upload {
 }
 
 @media (max-width: 700px) {
+	html {
+		height: calc(var(--vh, 1vh) * 100);
+	}
+
 	body {
 		background-image: url(../images/unsplash.png);
 		background-size: 100% 100%;
 		margin: 0;
+	}
+
+	.btn {
+		height: 30px;
+		padding: 3px 9px;
+		font-size: 12px;
+	}
+
+	label {
+		font-size: 12px;
 	}
 
 	.chat-container {
@@ -283,7 +346,7 @@ nav #image-upload {
 		border-radius: 0;
 		height: 100%;
 		height: 100vh;
-		/*height: calc(var(--vh, 1vh) * 100);*/
+		height: calc(var(--vh, 1vh) * 100);
 	}
 
 	.chat-main {
@@ -291,7 +354,7 @@ nav #image-upload {
 	}
 
 	.chat-header h2.room-name {
-		font-size: 18px;
+		font-size: 12px;
 		font-weight: bold;
 		display: block;
 	}
@@ -301,19 +364,48 @@ nav #image-upload {
 	}
 
 	.chat-messages {
-		min-height: calc(var(--vh, 1vh) * 100 - 70px - 135px);
-		max-height: calc(var(--vh, 1vh) * 100 - 70px - 135px);
+		min-height: calc(var(--vh, 1vh) * 100 - 70px - 120px);
+		max-height: calc(var(--vh, 1vh) * 100 - 70px - 120px);
+	}
+
+	#chat-form svg{
+		display: none;
+	}
+
+	.chat-form-container input[type="text"] {
+		font-size: 12px;
+		height: 32px;
+	}
+
+	button#login-btn.btn,
+	button#joinSelectedRoom.btn {
+		margin-top: 0;
+	}
+
+	select#roomSelector {
+		height: 30px;
+		font-size: 12px;
+		margin-bottom: 12.8px;
 	}
 
 	.join-container {
 		background-image: none;
 	}
 
-	.btn {
+	.join-main input[type='text'],
+	.join-main input[type='password'],
+	.join-main input[type='email'] {
 		font-size: 12px;
+		padding: 5px;
+		height: 30px;
+	}
+/*
+	.join-main .form-control,
+	.form-control #createRoomInput {
+		margin-bottom: 12.8px;
 	}
 
-/*	nav > .btn {
+	nav > .btn {
 		margin: 0 12px;
 	}
 */

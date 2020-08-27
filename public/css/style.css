@@ -78,7 +78,7 @@ fieldset > a {
 	overflow: hidden;
 	background-image: url(../images/pattern.png);
 	background-color: black;
-	background-size: cover;
+	background-size: contain;
 	border-radius: 10px;
 }
 
@@ -260,7 +260,7 @@ nav #image-upload {
 	margin: 80px auto;
 	color: #fff;
 	background-image: url(../images/pattern.png);
-	background-size: cover;
+	background-size: contain;
 	border-radius: 10px;
 }
 

@@ -259,7 +259,7 @@ nav #image-upload {
 	max-width: 500px;
 	margin: 80px auto;
 	color: #fff;
-	background-image: url(../images/unsplash.png);
+	background-image: url(../images/pattern.png);
 	background-size: cover;
 	border-radius: 10px;
 }
@@ -326,7 +326,7 @@ nav #image-upload {
 	}
 
 	body {
-		background-image: url(../images/unsplash.png);
+		background-image: url(../images/pattern.png);
 		background-size: 100% 100%;
 		margin: 0;
 	}

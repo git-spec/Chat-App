@@ -77,8 +77,9 @@
         const room = '<%=room%>';
         const roomID = '<%=roomID%>';
         // output old messages
-        const oldmessages = '<%-oldMessages%>';
-        const oldMessagesObj = JSON.parse(oldmessages);
+        const oldMessages = '<%-oldmessages%>';
+console.log(oldMessages);
+        const oldMessagesObj = JSON.parse(oldMessages);
         oldMessagesObj.forEach(element => {
             outputMessage(element);
         });
@@ -127,6 +128,15 @@
             };
         });
 
+        // lazy loading
+        document.querySelector('.chat-messages').onscroll = function () {
+            if(this.scrollTop === 0) {
+                socket.emit('old-messages', {room});
+                // scroll down
+                chatMessages.scrollTop = chatMessages.scrollHeight;
+            }; 
+        };
+
 /* ************************************************************ SOCKET.IO ******************************************************* */
         // initiate socket
         const socket = io();
@@ -137,6 +147,14 @@
             outputRoomName(room);
             outputUsers(users);
         });
+
+        // get old messages from server
+        socket.on('history', message => {
+            outputOldMessages(message);
+            // scroll down
+            //chatMessages.scrollTop = chatMessages.scrollHeight;
+        });
+
         // get message from server
         socket.on('message', message => {
             outputMessage(message);
@@ -172,6 +190,31 @@
                 div.innerHTML = `<p class="meta">${message.username} <span>${message.time}</span></p><p class="text">${message.text}</p>`;
             };
             document.querySelector('.chat-messages').appendChild(div);
+        };
+        // output old messages to DOM
+        function outputOldMessages(message) {
+            const div = document.createElement('div');
+            div.classList.add('message');
+            // check if message is image URL
+console.log('message:', message);
+            if (message.text.startsWith("/upload")) {
+                div.innerHTML = `<p class="meta">${message.username} <span>${message.time}</span></p><image class="image" src="${message.text}" />`;
+            } else {
+                div.innerHTML = `<p class="meta">${message.username} <span>${message.time}</span></p><p class="text">${message.text}</p>`;
+            };
+            // add message at the beginning to chat
+            const chat = document.querySelector('.chat-messages');
+            chat.insertBefore(div, chat.firstChild);
+        };
+        // add room name to DOM
+        function outputRoomName(room) {
+            for(let i = 0; i < roomName.length; i++) {
+                roomName[i].innerText = room;
+            };
+        };
+        // add users to DOM
+        function outputUsers(users) {
+            userList.innerHTML = `${users.map(user => `<li>${user}</li>`).join('')}`;
         };
         // add room name to DOM
         function outputRoomName(room) {

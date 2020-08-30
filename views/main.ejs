@@ -34,7 +34,10 @@
 							<input type="text" name="username" id="reg-username" placeholder="Enter Username" required />
 							<label for="email">Email</label>
 							<input type="email" name="email" id="email" placeholder="Enter Email" required />
-							<label for="password">Password</label>
+							<div>
+								<label for="password">Password</label>
+								<div><div></div></div>
+							</div>
 							<input type="password" name="password" id="reg-password" placeholder="Enter Password" required />
 							<label for="repassword">Confirmation</label>
 							<input type="password" name="repassword" id="repassword" placeholder="Confirm Password" required />
@@ -73,7 +76,16 @@
 					e.target.parentElement.style.display = 'none';
 				};
 			});
+/*
+			// check register password
+			const passwordInp = document.querySelector('#reg-password');
+			const regEx = new RegExp((?=.** \d)(?=.** [a-z])(?=.** [A-Z])(?=.** [@#$%]).{6,20})
+			passwordInp.addEventListener('blur', () => {
+				if (passwordInp.value) {
 
+				};
+			});
+*/
 			// register user
 			document.querySelector('#register-btn').addEventListener('click', e => {
 				e.preventDefault()
@@ -97,6 +109,13 @@
 							repassword: repassword.value
 						};
 						request('/', USER);
+						// empty inputs
+						firstName.value = '';
+						lastName.value = '';
+						userName.value = '';
+						email.value = '';
+						password.value = '';
+						repassword.value = '';
 					} else {
 						alert("Passwords do not match");
 					}
@@ -104,6 +123,7 @@
 					alert("Not all inputs are filled");
 				};
 			});
+
 			// login user
 			document.querySelector('#login-btn').addEventListener('click', e => {
 				e.preventDefault()
@@ -117,6 +137,9 @@
 						password: password.value
 					};
 					request('/', USER);
+					// empty inputs
+					userName.value = '';
+					password.value = '';
 				} else {
 					alert("Not all inputs are filled");
 				};
@@ -149,6 +172,12 @@
 									break;
 								case 5:
 									alert("Missing entries");
+									break;
+								case 6:
+									alert("Your account is not verified yet!\nPlease check your emails.");
+									break;
+								case 7:
+									alert("Registration successful!\nPlease check your emails to verify your account.");
 									break;
 								default:
 									alert("Server error");

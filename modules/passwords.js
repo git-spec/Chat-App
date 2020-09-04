@@ -3,7 +3,7 @@ function passwordDB() {
 };
 
 function passwordEmail() {
-    return 'password'
+    return '!234qweR'
 };
 
 module.exports = {

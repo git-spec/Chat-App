@@ -2,9 +2,9 @@ const nodemailer = require('nodemailer');
 const {passwordEmail} = require('./passwords');
 // create delivery box for email
 const transporter = nodemailer.createTransport({
-    service: 'gmail',        // 'mailserver',
+    service: 'mail.coding-school.org',        // 'mailserver',
     auth: {
-        user: 'inkyfischer@gmail.com',      // 'ingo@coding-school.org',
+        user: 'info@coding-school.org',      // 'ingo@coding-school.org',
         pass: passwordEmail()
     }
 });
@@ -13,7 +13,7 @@ const transporter = nodemailer.createTransport({
 function sendEmail(email, subject, message) {
     return new Promise((resolve, reject) => {
         const mailOption = {
-            from: 'inkyfischer@gmail.com',      // 'ingo@coding-school.org',
+            from: 'info@coding-school.org',      // 'ingo@coding-school.org',
             to: email,
             subject: subject,
             text:  message

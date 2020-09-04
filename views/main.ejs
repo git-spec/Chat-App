@@ -67,56 +67,6 @@
 		</div>
 		<script>
 /* ************************************************************ EVENTS ******************************************************* */
-			const lev = document.querySelector('.lev');
-			// regular expressions for password strength
-			const strongStrength = new RegExp('^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[!@#\$%\^&\*])(?=.{8,})', 'g');
-			const mediumStrength = new RegExp('^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.{6,})', 'g');
-			const lowStrength = new RegExp('^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.{4,})', 'g');
-			const noStrength = new RegExp('^(?=.*[a-z])(?=.*[A-Z])|(?=.*[0-9])(?=.{2,})', 'g');
-			
-			// password safety
-			password.addEventListener('input', e => {
-				e.preventDefault;
-				console.log(e.target.value);
-				// check strength of password
-				if (strongStrength.test(e.target.value)) {
-					lev.previousElementSibling.style.display = "inline-block";
-					lev.classList = "lev success";
-					lev.nextElementSibling.classList = "success";
-					lev.nextElementSibling.innerText = "100%";
-					lev.lastElementChild.classList = "lev100 success";
-				} else if (mediumStrength.test(e.target.value)) {
-					lev.previousElementSibling.style.display = "inline-block";
-					lev.classList = "lev success";
-					lev.nextElementSibling.classList = "success";
-					lev.nextElementSibling.innerText = "80%";
-					lev.lastElementChild.classList = "lev80 success";
-				} else if (mediumStrength.test(e.target.value)) {
-					lev.previousElementSibling.style.display = "inline-block";
-					lev.classList = "lev success";
-					lev.nextElementSibling.classList = "success";
-					lev.nextElementSibling.innerText = "60%";
-					lev.lastElementChild.classList = "lev60 success";
-				} else if (lowStrength.test(e.target.value)) {
-					lev.previousElementSibling.style.display = "inline-block";
-					lev.classList = "lev error";
-					lev.nextElementSibling.classList = "error";
-					lev.nextElementSibling.innerText = "40%";
-					lev.lastElementChild.classList = "lev40 error";
-				} else if (noStrength.test(e.target.value)) {
-					lev.previousElementSibling.style.display = "inline-block";
-					lev.classList = "lev error";
-					lev.nextElementSibling.classList = "error";
-					lev.nextElementSibling.innerText = "20%";
-					lev.lastElementChild.classList = "lev20 error";
-				} else {
-					lev.previousElementSibling.style.display = "inline-block";
-					lev.classList = "lev error";
-					lev.nextElementSibling.classList = "error";
-					lev.nextElementSibling.innerText = "0%";
-					lev.lastElementChild.classList = "lev0 error";
-				};
-			});
 
 
 			// switch from register to login page
@@ -146,6 +96,56 @@
 				const email = document.querySelector('#email');
 				const password = document.querySelector('#reg-password');
 				const repassword = document.querySelector('#repassword');
+				const lev = document.querySelector('.lev');
+				// regular expressions for password strength
+				const strongStrength = new RegExp('^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[!@#\$%\^&\*])(?=.{8,})', 'g');
+				const mediumStrength = new RegExp('^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.{6,})', 'g');
+				const lowStrength = new RegExp('^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.{4,})', 'g');
+				const noStrength = new RegExp('^(?=.*[a-z])(?=.*[A-Z])|(?=.*[0-9])(?=.{2,})', 'g');
+				
+				// password safety
+				password.addEventListener('input', e => {
+					e.preventDefault;
+					console.log(e.target.value);
+					// check strength of password
+					if (strongStrength.test(e.target.value)) {
+						lev.previousElementSibling.style.display = "inline-block";
+						lev.classList = "lev success";
+						lev.nextElementSibling.classList = "success";
+						lev.nextElementSibling.innerText = "100%";
+						lev.lastElementChild.classList = "lev100 success";
+					} else if (mediumStrength.test(e.target.value)) {
+						lev.previousElementSibling.style.display = "inline-block";
+						lev.classList = "lev success";
+						lev.nextElementSibling.classList = "success";
+						lev.nextElementSibling.innerText = "80%";
+						lev.lastElementChild.classList = "lev80 success";
+					} else if (mediumStrength.test(e.target.value)) {
+						lev.previousElementSibling.style.display = "inline-block";
+						lev.classList = "lev success";
+						lev.nextElementSibling.classList = "success";
+						lev.nextElementSibling.innerText = "60%";
+						lev.lastElementChild.classList = "lev60 success";
+					} else if (lowStrength.test(e.target.value)) {
+						lev.previousElementSibling.style.display = "inline-block";
+						lev.classList = "lev error";
+						lev.nextElementSibling.classList = "error";
+						lev.nextElementSibling.innerText = "40%";
+						lev.lastElementChild.classList = "lev40 error";
+					} else if (noStrength.test(e.target.value)) {
+						lev.previousElementSibling.style.display = "inline-block";
+						lev.classList = "lev error";
+						lev.nextElementSibling.classList = "error";
+						lev.nextElementSibling.innerText = "20%";
+						lev.lastElementChild.classList = "lev20 error";
+					} else {
+						lev.previousElementSibling.style.display = "inline-block";
+						lev.classList = "lev error";
+						lev.nextElementSibling.classList = "error";
+						lev.nextElementSibling.innerText = "0%";
+						lev.lastElementChild.classList = "lev0 error";
+					};
+				});
 				// check if input data are filled
 				if(firstName.value.trim() && lastName.value.trim() && userName.value.trim() && email.value.trim() && password.value && repassword.value) {
 					if(password.value === repassword.value) {

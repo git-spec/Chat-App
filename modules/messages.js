@@ -15,14 +15,14 @@ function insertMessage(message, userID, roomID) {
   });
 };
 
-function getMessages(roomName) {
+function getMessages(room, pageNum) {
   return new Promise((resolve, reject) => {
     runQuery(`
               SELECT messages.*, users.username as username FROM messages
               INNER JOIN rooms ON messages.roomID = rooms.ID
               INNER JOIN users ON messages.userID = users.ID
-              WHERE rooms.room LIKE '${roomName}' 
-              ORDER BY message_time LIMIT 8
+              WHERE rooms.room LIKE '${room}' 
+              ORDER BY message_time LIMIT 8 OFFSET ${pageNum}
     `).then(messages => {
       resolve(messages.map(message => {
         message.message = message.message.toString();

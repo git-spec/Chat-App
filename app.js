@@ -110,14 +110,10 @@ io.on('connection', socket => {
   });
 
   // listen for old messages
-  socket.on('old-messages', ({room}) => {
-console.log('room/oldMsgs:', room);
-    let num = 8;
+  socket.on('old-messages', ({room, pageNum}) => {
     // get history of messages from db
     if (room) {
-      num += 8;
-      getMessages(room).then(messages => {
-console.log('get messages:', messages);
+      getMessages(room, pageNum).then(messages => {
         const msgs = [];
         messages.forEach(msg => {
           msgs.push({
@@ -199,7 +195,7 @@ console.log('get messages:', messages);
     // get room and user by socketID from db
     getRoomAndUser(socket.id).then(result => {
       const room = result[0].room;
-      const username = result[0].username
+      const username = result[0].username;
       // delete user & room correlation from database when user lefts the room
       leaveUsersRoom(socket.id).then(() => {
         // get the current users in this room from db
@@ -348,7 +344,7 @@ app.get('/chat/:room', (req, res) => {
       getRoom(req.params.room).then(room => {
         const roomID = room[0].ID;
         // get history of messages from db
-        getMessages(req.params.room).then(messages => {
+        getMessages(req.params.room, 1).then(messages => {
           const msgs = [];
           messages.forEach(msg => {
             msgs.push({

@@ -50,6 +50,12 @@ a {
 	color: black;
 }
 
+.btn:active {
+	background: var(--light-color);
+	color: black;
+	border-inline-color: black;
+}
+
 fieldset {
 	border: none;
 	position: relative;
@@ -215,6 +221,38 @@ nav #image-upload {
 
 #chat-form > div > input {
 	border-radius: 6px;
+}
+
+.form-control > label[for="password"] {
+	float: left;
+}
+
+.form-control > div {
+	display: flex;
+	justify-content: space-between;
+	padding-right: 40px;
+}
+
+.form-control > div > div {
+	width: 60px;
+	height: 16px;
+	background-color: var(--error-color);
+	position: relative;
+	display: none;
+}
+
+.form-control > div > div::before {
+	content: "Safety";
+	color: white;
+	position: absolute;
+	left: -54px;
+}
+
+.form-control > div > div::after {
+	content: "30%";
+	color: white;
+	position: absolute;
+	right: -40px;
 }
 
 .form-control #createRoomInput {
@@ -413,7 +451,7 @@ nav #image-upload {
 		padding: 3px 9px;
 		font-size: 12px;
 	}
-
+  
 	.btn.menu#up {
 		bottom: 0;
 	}

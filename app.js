@@ -252,19 +252,21 @@ app.post('/', (req, res) => {
   // 4 server error
   // 5 missing entries
   // 6 not verified
+  // 7 registration successful
   if (firstname && lastname && username && email && password && password === repassword) {
     registerUser(firstname, lastname, username, email, password).then(() => {
-      loginUser(username, password).then(user => {
-        req.session.user = user.username;
-        req.session.userID = user.ID;
-        res.json(1);
-      }).catch(err => {
-        if (err === 3) {
-          res.json(3);
-        } else {
-          res.json(4);
-        };
-      });  
+      res.json(7);
+      // loginUser(username, password).then(user => {
+      //   req.session.user = user.username;
+      //   req.session.userID = user.ID;
+      //   res.json(1);
+      // }).catch(err => {
+      //   if (err === 3) {
+      //     res.json(3);
+      //   } else {
+      //     res.json(4);
+      //   };
+      // });  
     }).catch(err => {
       if (err === "exists") {
         res.json(2);
@@ -280,6 +282,8 @@ app.post('/', (req, res) => {
     }).catch(err => {
       if (err === 3) {
         res.json(3);
+      } else if (err === 6) {
+        res.json(6);
       } else {
         res.json(4);
       };
@@ -290,9 +294,9 @@ app.post('/', (req, res) => {
 });
 
 // verify user
-app.get('/verify/:userID', (req, res) => {
-  verifyUser(req.params.userID).then(() => {
-    res.json('verified');
+app.get('/verify/:email', (req, res) => {
+  verifyUser(req.params.email).then(() => {
+    res.send("You've verified your account!");
   }).catch(err => {
     console.log(err);
   });

@@ -85,7 +85,16 @@
 					e.target.parentElement.style.display = 'none';
 				};
 			});
+/*
+			// check register password
+			const passwordInp = document.querySelector('#reg-password');
+			const regEx = new RegExp((?=.** \d)(?=.** [a-z])(?=.** [A-Z])(?=.** [@#$%]).{6,20})
+			passwordInp.addEventListener('blur', () => {
+				if (passwordInp.value) {
 
+				};
+			});
+*/
 			// register user
 			document.querySelector('#register-btn').addEventListener('click', e => {
 				e.preventDefault()			
@@ -226,6 +235,12 @@
 									break;
 								case 6:
 									alert("You are not verified yet.");
+									break;
+								case 6:
+									alert("Your account is not verified yet!\nPlease check your emails.");
+									break;
+								case 7:
+									alert("Registration successful!\nPlease check your emails to verify your account.");
 									break;
 								default:
 									alert("Server error!");

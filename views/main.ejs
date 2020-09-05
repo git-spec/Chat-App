@@ -180,9 +180,11 @@
 			// login user
 			document.querySelector('#login-btn').addEventListener('click', e => {
 				e.preventDefault()
+				// get login form for input data
+				const loginForm = loginField.lastElementChild.previousElementSibling;
 				// input data
-				const userName = document.querySelector('#log-username');
-				const password = document.querySelector('#log-password');
+				const userName = loginForm.children[1];
+				const password = loginForm.children[3];
 				if(userName.value.trim() && password.value) {
 					// user object with input data
 					const USER = {
@@ -229,6 +231,12 @@
 									break;
 								case 6:
 									alert("You are not verified yet.");
+									break;
+								case 6:
+									alert("Your account is not verified yet!\nPlease check your emails.");
+									break;
+								case 7:
+									alert("Registration successful!\nPlease check your emails to verify your account.");
 									break;
 								default:
 									alert("Server error!");

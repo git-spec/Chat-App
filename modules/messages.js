@@ -33,17 +33,6 @@ function getMessages(room, pageNum) {
     });
   });
 };
-/*
-function getMessage(userID) {
-  return new Promise((resolve, reject) => {
-    runQuery('SELECT * FROM messages').then(message => {
-      resolve(message);
-    }).catch(err => {
-      reject(err);
-    });
-  });
-};
-*/
 function formatMessage(username, text) {
   return {
     username,
@@ -54,7 +43,6 @@ function formatMessage(username, text) {
 
 module.exports = {
   insertMessage,
-  // getMessage,
   formatMessage,
   getMessages
 };

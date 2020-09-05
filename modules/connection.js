@@ -26,7 +26,8 @@ function connectDB() {
                 // multipleStatements: true,
                 host: 'localhost',
                 port: 3306,
-                user: 'phpmyadmin',
+                // user: 'phpmyadmin',
+                user: 'admin',
                 password: passwordDB(),
                 database: 'chatapp'
             });

@@ -34,7 +34,17 @@
 							<input type="text" name="username" id="reg-username" placeholder="Enter Username" required />
 							<label for="email">Email</label>
 							<input type="email" name="email" id="email" placeholder="Enter Email" required />
-							<label for="password">Password</label>
+							<div>
+								<label for="password">Password</label>
+								<div class="safetyWrap">
+									<span>Strength</span>
+									<div class="lev">
+										<div></div>
+										<div></div>
+									</div>
+									<span></span>
+								</div>
+							</div>
 							<input type="password" name="password" id="reg-password" placeholder="Enter Password" required />
 							<label for="repassword">Confirmation</label>
 							<input type="password" name="repassword" id="repassword" placeholder="Confirm Password" required />
@@ -57,34 +67,89 @@
 		</div>
 		<script>
 /* ************************************************************ EVENTS ******************************************************* */
+			// get fieldsets
+			const loginField = document.querySelector('#login');
+			const registerField = document.querySelector('#register');
 			// switch from register to login page
 			document.querySelector('#register > a').addEventListener('click', e => {
 				e.preventDefault();
-				if(document.querySelector('#login').style.display === 'none') {
-					document.querySelector('#login').style.display = 'block';
+				if(loginField.style.display === 'none') {
+					loginField.style.display = 'block';
 					e.target.parentElement.style.display = 'none';
 				};
 			});
 			// switch from login to register page
 			document.querySelector('#login > a').addEventListener('click', e => {
 				e.preventDefault();
-				if(document.querySelector('#register').style.display === 'none') {
-					document.querySelector('#register').style.display = 'block';
+				if(registerField.style.display === 'none') {
+					registerField.style.display = 'block';
 					e.target.parentElement.style.display = 'none';
 				};
 			});
 
+			// get register form for input data
+			const registerForm = document.querySelector('#register > .form-control');
+			// input data
+			const password = registerForm.children[9];
+			// password strength level
+			const lev = registerForm.children[8].lastElementChild.firstElementChild.nextElementSibling;
+			// regular expressions for password strength
+			const strongStrength = new RegExp('^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[!@#\$%\^&\*])(?=.{8,})', 'g');
+			const mediumStrength = new RegExp('^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.{6,})', 'g');
+			const lowStrength = new RegExp('^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.{4,})', 'g');
+			const noStrength = new RegExp('^(?=.*[a-z])(?=.*[A-Z])|(?=.*[0-9])(?=.{2,})', 'g');
+			// password safety
+			password.addEventListener('input', e => {
+				e.preventDefault;
+				// check strength of password
+				if (strongStrength.test(e.target.value)) {
+					lev.previousElementSibling.style.display = "inline-block";
+					lev.classList = "lev success";
+					lev.nextElementSibling.classList = "success";
+					lev.nextElementSibling.innerText = "100%";
+					lev.lastElementChild.classList = "lev100 success";
+				} else if (mediumStrength.test(e.target.value)) {
+					lev.previousElementSibling.style.display = "inline-block";
+					lev.classList = "lev success";
+					lev.nextElementSibling.classList = "success";
+					lev.nextElementSibling.innerText = "80%";
+					lev.lastElementChild.classList = "lev80 success";
+				} else if (mediumStrength.test(e.target.value)) {
+					lev.previousElementSibling.style.display = "inline-block";
+					lev.classList = "lev success";
+					lev.nextElementSibling.classList = "success";
+					lev.nextElementSibling.innerText = "60%";
+					lev.lastElementChild.classList = "lev60 success";
+				} else if (lowStrength.test(e.target.value)) {
+					lev.previousElementSibling.style.display = "inline-block";
+					lev.classList = "lev error";
+					lev.nextElementSibling.classList = "error";
+					lev.nextElementSibling.innerText = "40%";
+					lev.lastElementChild.classList = "lev40 error";
+				} else if (noStrength.test(e.target.value)) {
+					lev.previousElementSibling.style.display = "inline-block";
+					lev.classList = "lev error";
+					lev.nextElementSibling.classList = "error";
+					lev.nextElementSibling.innerText = "20%";
+					lev.lastElementChild.classList = "lev20 error";
+				} else {
+					lev.previousElementSibling.style.display = "inline-block";
+					lev.classList = "lev error";
+					lev.nextElementSibling.classList = "error";
+					lev.nextElementSibling.innerText = "0%";
+					lev.lastElementChild.classList = "lev0 error";
+				};
+			});
 			// register user
 			document.querySelector('#register-btn').addEventListener('click', e => {
-				e.preventDefault()
+				e.preventDefault();
 				// input data
-				const firstName = document.querySelector('#firstname');
-				const lastName = document.querySelector('#lastname');
-				const userName = document.querySelector('#reg-username');
-				const email = document.querySelector('#email');
-				const password = document.querySelector('#reg-password');
-				const repassword = document.querySelector('#repassword');
-
+				const firstName = registerForm.children[1];
+				const lastName = registerForm.children[3];
+				const userName = registerForm.children[5];
+				const email = registerForm.children[7];
+				const repassword = registerForm.children[11];
+				// check if input data are filled
 				if(firstName.value.trim() && lastName.value.trim() && userName.value.trim() && email.value.trim() && password.value && repassword.value) {
 					if(password.value === repassword.value) {
 						// user object with input data
@@ -97,6 +162,13 @@
 							repassword: repassword.value
 						};
 						request('/', USER);
+						// empty inputs
+						firstName.value = '';
+						lastName.value = '';
+						userName.value = '';
+						email.value = '';
+						password.value = '';
+						repassword.value = '';
 					} else {
 						alert("Passwords do not match");
 					}
@@ -104,12 +176,15 @@
 					alert("Not all inputs are filled");
 				};
 			});
+
 			// login user
 			document.querySelector('#login-btn').addEventListener('click', e => {
 				e.preventDefault()
+				// get login form for input data
+				const loginForm = loginField.lastElementChild.previousElementSibling;
 				// input data
-				const userName = document.querySelector('#log-username');
-				const password = document.querySelector('#log-password');
+				const userName = loginForm.children[1];
+				const password = loginForm.children[3];
 				if(userName.value.trim() && password.value) {
 					// user object with input data
 					const USER = {
@@ -117,6 +192,9 @@
 						password: password.value
 					};
 					request('/', USER);
+					// empty inputs
+					userName.value = '';
+					password.value = '';
 				} else {
 					alert("Not all inputs are filled");
 				};
@@ -134,24 +212,34 @@
 				}).then(response => {
 					if(response.status === 200) {
 						response.json().then(data => {
+							// input alerts
 							switch (data) {
 								case 1:
 									window.location = "/room";
 									break;
 								case 2:
-									alert("User already exists");
+									alert("The Email is already registered.");
 									break;
 								case 3:
-									alert("User not found or password is not correct");
+									alert("You could't been found or your password is not correct.");
 									break;
 								case 4:
-									alert("Server error");
+									alert("Server error!");
 									break;
 								case 5:
-									alert("Missing entries");
+									alert("Missing entries!");
+									break;
+								case 6:
+									alert("You are not verified yet.");
+									break;
+								case 6:
+									alert("Your account is not verified yet!\nPlease check your emails.");
+									break;
+								case 7:
+									alert("Registration successful!\nPlease check your emails to verify your account.");
 									break;
 								default:
-									alert("Server error");
+									alert("Server error!");
 									break;
 							};
 						}).catch(err => {

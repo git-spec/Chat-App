@@ -1,11 +1,13 @@
 // ---------------------------------------- setup ----------------------------------------
 // import mySql
 const mySql = require('mysql');
+// import passwords
+const {passwordDB} = require('./passwords');
 
 // ---------------------------------------- functions ----------------------------------------
 // set global connection variable
 let ctn = null;
-function connection() {
+function connectDB() {
     return new Promise((resolve, reject) => {
         if(ctn) {
             if(ctn.state === "disconnected") {
@@ -24,8 +26,9 @@ function connection() {
                 // multipleStatements: true,
                 host: 'localhost',
                 port: 3306,
+                // user: 'phpmyadmin',
                 user: 'admin',
-                password: '12345678',
+                password: passwordDB(),
                 database: 'chatapp'
             });
             ctn.connect(err => {
@@ -41,7 +44,7 @@ function connection() {
 
 function runQuery(queryString) {
     return new Promise((resolve, reject) => {
-        connection().then(() => {
+        connectDB().then(() => {
             ctn.query(queryString, (err, result, fields) => {
                 if(err) {
                     reject(err);

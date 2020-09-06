@@ -40,7 +40,7 @@
                    <button class="btn"><i class="fas fa-file-image"></i></button>
                    <input type="file" id="image-upload" accept="image/x-png,image/gif,image/jpeg" />
                 </label>
-                <button class="btn"><i class="fas fa-times"></i></button>
+                <button class="btn" style="display: none;"><i class="fas fa-times"></i></button>
             </nav>
             <form id="chat-form">
                 <input id="msgInp" type="text" class="emoji" placeholder="Enter Message" required autocomplete="off"/>
@@ -73,6 +73,7 @@
         const chatMessages = document.querySelector('.chat-messages');
         const roomName = document.getElementsByClassName('room-name');
         const userList = document.getElementById('users');
+        const nav = document.querySelector('nav');
         // user variables
         const username = '<%=username%>';
         const userID = '<%=userID%>';
@@ -86,11 +87,21 @@
         });
 
 /* ************************************************************ EVENTS ******************************************************* */
+        // show navigation bar for mobile
+        const x = window.matchMedia("(max-width: 700px)")
+        function mobileMedia() {
+            if (x.matches) {
+                nav.lastElementChild.style.display = 'block';
+            } else {
+                nav.lastElementChild.style.display = 'none';
+            };
+        };
+        x.addListener(mobileMedia);
         // open and close mobile menu for chat
         let navUp = false;
         document.querySelector('.btn.menu').addEventListener('click', e => {
             e.preventDefault();
-            let nav = document.querySelector('nav');
+            nav.style.display = 'flex';
             if (navUp === false) {
                 e.target.parentElement.style.backgroundColor = "#e6e9ff";
                 e.target.parentElement.style.color = "black";

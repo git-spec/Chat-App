@@ -115,10 +115,10 @@ nav {
 	justify-content: space-between;
 }
 
-nav .btn {
-	/*margin: 0 18px;*/
+/*nav .btn {
+	margin: 0 18px;
 	position: relative;
-}
+}*/
 
 nav > .btn:last-child {
 	margin-right: 0;
@@ -226,7 +226,7 @@ nav #image-upload {
 .form-control > label[for="password"] {
 	float: left;
 }
-
+/*
 .form-control > div {
 	display: flex;
 	justify-content: space-between;
@@ -254,7 +254,7 @@ nav #image-upload {
 	position: absolute;
 	right: -40px;
 }
-
+*/
 .form-control #createRoomInput {
 	margin: 0;
 }
@@ -273,95 +273,86 @@ nav #image-upload {
 }
 
 /* password safety */
-.form-control > div > div {
-	width: 40%;
+.form-control > div > .safetyWrap {
 	height: 16px;
 	display: flex;
 	justify-content: space-between;
 	align-items: center;
-
-}
-
-.form-control > div > div > div.lev {
-	width: 60px;
-	height: 16px;
-	display: inline-block;
-}
-
-/* password safety level text */
-.form-control > div > label[for="password"] + div > span:first-child {
-	color: white;
-	display: none;
 }
 
 .form-control > div > .safetyWrap > div.lev {
 	width: 60px;
 	height: 16px;
+	display: inline-block;
 	position: relative;
 }
 
-/* password safety level num red */
-.form-control > div > .safetyWrap > span.error {
-	width: 40px;
-	color: var(--error-color);
-	text-align: end;
-}
-
-/* password safety level red*/
-.form-control > div > .safetyWrap > div.lev.error > div:first-child {
+.form-control > div > .safetyWrap > div.lev > div:first-child {
 	width: 60px;
 	height: 16px;
-	background-color: var(--error-color);
 	opacity: .5;
 	position: absolute;
 }
 
+.form-control > div > .safetyWrap > div.lev > div:last-child {
+	height: 16px;
+	position: absolute;
+}
+
+/* password safety level text */
+.form-control > div > label[for="password"] + div > span:first-child {
+	font-size: 14px;
+	color: white;
+	margin-right: 6px;
+	display: none;
+}
+
+/* password safety level num */
+.form-control > div > label[for="password"] + div > span:last-child {
+	width: 40px;
+	font-size: 14px;
+	text-align: end;
+}
+
+/* password safety level num red */
+.form-control > div > .safetyWrap > span.error {
+	color: var(--error-color);
+}
+
+/* password safety level red*/
+.form-control > div > .safetyWrap > div.lev.error > div {
+	background-color: var(--error-color);
+}
+
 .form-control > div > .safetyWrap > div.lev > div.lev20 {
 	width: 12px;
-	height: 16px;
-	background-color: var(--error-color);
-	position: absolute;
 }
 
 .form-control > div > .safetyWrap > div.lev > div.lev40 {
 	width: 24px;
-	height: 16px;
-	background-color: var(--error-color);
 }
 
 /* password safety level num green*/
 .form-control > div > .safetyWrap > span.success {
-	width: 40px;
 	color: var(--success-color);
-	text-align: end;
 }
 
 /* password safety level green*/
 
-.form-control > div > .safetyWrap > div.lev.success > div:first-child {
-	width: 60px;
-	height: 16px;
+.form-control > div > .safetyWrap > div.lev.success > div {
 	background-color: var(--success-color);
-	opacity: .4;
-	position: absolute;
 }
 
 .form-control > div > .safetyWrap > div.lev > div.lev60 {
 	width: 36px;
-	height: 16px;
-	background-color: var(--success-color);
 }
 
 .form-control > div > .safetyWrap > div.lev > div.lev80 {
 	width: 48px;
-	height: 16px;
-	background-color: var(--success-color);
 }
 
 .form-control > div > .safetyWrap > div.lev > div.lev100 {
 	width: 60px;
-	height: 16px;
-	background-color: var(--success-color);
 }
 
 /* Join Page */
@@ -401,7 +392,7 @@ nav #image-upload {
 	margin-bottom: 20px;
 }
 
-.join-main .form-control {
+.joinFnav-main .form-control {
 	margin-bottom: 20px;
 }
 
@@ -501,7 +492,6 @@ nav #image-upload {
 	}
 
 	.chat-form-container > nav {
-		display: flex;
 		width: 100%;
 		height: 100%;
 		position: absolute;
@@ -549,27 +539,27 @@ nav #image-upload {
 	}
 
 	/* password safety */
-	.form-control > div > div {
+	.form-control > div > .safetyWrap {
 		height: 12px;
 	}
 
-	.form-control > div > div::before {
-		font-size: 12px;
-		left: -40px;
+	.form-control > div > .safetyWrap > div.lev {
+		height: 12px;
 	}
 
-	.form-control > div > div::after {
-		font-size: 12px;
+	.form-control > div > .safetyWrap > div.lev > div:first-child,
+	.form-control > div > .safetyWrap > div.lev > div:last-child {
+		height: 12px;
 	}
-
-	/*
-		.join-main .form-control,
-		.form-control #createRoomInput {
-			margin-bottom: 12.8px;
-		}
-
-		nav > .btn {
-			margin: 0 12px;
-		}
-	*/
+	
+	/* password safety level num */
+	.form-control > div > label[for="password"] + div > span:last-child {
+		font-size: 10px;
+		width: 28px;
+	}
+	
+	/* password safety level text */
+	.form-control > div > label[for="password"] + div > span:first-child {
+		font-size: 10px;
+	}
 }

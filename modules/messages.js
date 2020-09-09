@@ -33,6 +33,7 @@ function getMessages(room, pageNum) {
     });
   });
 };
+
 function formatMessage(username, text) {
   return {
     username,

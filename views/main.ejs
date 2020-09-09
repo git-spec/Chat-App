@@ -34,17 +34,7 @@
 							<input type="text" name="username" id="reg-username" placeholder="Enter Username" required />
 							<label for="email">Email</label>
 							<input type="email" name="email" id="email" placeholder="Enter Email" required />
-							<div>
-								<label for="password">Password</label>
-								<div class="safetyWrap">
-									<span>Strength</span>
-									<div class="lev">
-										<div></div>
-										<div></div>
-									</div>
-									<span></span>
-								</div>
-							</div>
+							<label for="password">Password</label>
 							<input type="password" name="password" id="reg-password" placeholder="Enter Password" required />
 							<label for="repassword">Confirmation</label>
 							<input type="password" name="repassword" id="repassword" placeholder="Confirm Password" required />
@@ -90,65 +80,162 @@
 			// get register form for input data
 			const registerForm = document.querySelector('#register > .form-control');
 			// input data
+			const firstName = registerForm.children[1];
+			const lastName = registerForm.children[3];
+			const userName = registerForm.children[5];
+			const email = registerForm.children[7];
 			const password = registerForm.children[9];
-			// password strength level
-			const lev = registerForm.children[8].lastElementChild.firstElementChild.nextElementSibling;
-			// regular expressions for password strength
-			const strongStrength = new RegExp('^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[!@#\$%\^&\*])(?=.{8,})', 'g');
-			const mediumStrength = new RegExp('^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.{6,})', 'g');
-			const lowStrength = new RegExp('^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.{4,})', 'g');
-			const noStrength = new RegExp('^(?=.*[a-z])(?=.*[A-Z])|(?=.*[0-9])(?=.{2,})', 'g');
-			// password safety
-			password.addEventListener('input', e => {
-				e.preventDefault;
-				// check strength of password
-				if (strongStrength.test(e.target.value)) {
-					lev.previousElementSibling.style.display = "inline-block";
-					lev.classList = "lev success";
-					lev.nextElementSibling.classList = "success";
-					lev.nextElementSibling.innerText = "100%";
-					lev.lastElementChild.classList = "lev100 success";
-				} else if (mediumStrength.test(e.target.value)) {
-					lev.previousElementSibling.style.display = "inline-block";
-					lev.classList = "lev success";
-					lev.nextElementSibling.classList = "success";
-					lev.nextElementSibling.innerText = "80%";
-					lev.lastElementChild.classList = "lev80 success";
-				} else if (mediumStrength.test(e.target.value)) {
-					lev.previousElementSibling.style.display = "inline-block";
-					lev.classList = "lev success";
-					lev.nextElementSibling.classList = "success";
-					lev.nextElementSibling.innerText = "60%";
-					lev.lastElementChild.classList = "lev60 success";
-				} else if (lowStrength.test(e.target.value)) {
-					lev.previousElementSibling.style.display = "inline-block";
-					lev.classList = "lev error";
-					lev.nextElementSibling.classList = "error";
-					lev.nextElementSibling.innerText = "40%";
-					lev.lastElementChild.classList = "lev40 error";
-				} else if (noStrength.test(e.target.value)) {
-					lev.previousElementSibling.style.display = "inline-block";
-					lev.classList = "lev error";
-					lev.nextElementSibling.classList = "error";
-					lev.nextElementSibling.innerText = "20%";
-					lev.lastElementChild.classList = "lev20 error";
+			const repassword = registerForm.children[11];
+			const inputList = [firstName, lastName, userName, email, password, repassword];
+			// check previous input by focusin
+			lastName.addEventListener('focusin', e => {
+				if (!firstName.value && firstName.previousElementSibling.tagName !== 'SPAN') {
+					firstName.insertAdjacentHTML('beforebegin', '<span style="color: var(--error-color); float: right;">required</span>');
+				}
+			})
+			userName.addEventListener('focusin', e => {
+				if (!firstName.value && firstName.previousElementSibling.tagName !== 'SPAN') {
+					firstName.insertAdjacentHTML('beforebegin', '<span style="color: var(--error-color); float: right;">required</span>');
+				}
+				if (!lastName.value && lastName.previousElementSibling.tagName !== 'SPAN') {
+					lastName.insertAdjacentHTML('beforebegin', '<span style="color: var(--error-color); float: right;">required</span>');
+				}
+			})
+			email.addEventListener('focusin', e => {
+				if (!firstName.value && firstName.previousElementSibling.tagName !== 'SPAN') {
+					firstName.insertAdjacentHTML('beforebegin', '<span style="color: var(--error-color); float: right;">required</span>');
+				}
+				if (!lastName.value && lastName.previousElementSibling.tagName !== 'SPAN') {
+					lastName.insertAdjacentHTML('beforebegin', '<span style="color: var(--error-color); float: right;">required</span>');
+				}
+				if (!userName.value && userName.previousElementSibling.tagName !== 'SPAN') {
+					userName.insertAdjacentHTML('beforebegin', '<span style="color: var(--error-color); float: right;">required</span>');
+				}
+			})
+			password.addEventListener('focusin', e => {
+				if (!firstName.value && firstName.previousElementSibling.tagName !== 'SPAN') {
+					firstName.insertAdjacentHTML('beforebegin', '<span style="color: var(--error-color); float: right;">required</span>');
+				}
+				if (!lastName.value && lastName.previousElementSibling.tagName !== 'SPAN') {
+					lastName.insertAdjacentHTML('beforebegin', '<span style="color: var(--error-color); float: right;">required</span>');
+				}
+				if (!userName.value && userName.previousElementSibling.tagName !== 'SPAN') {
+					userName.insertAdjacentHTML('beforebegin', '<span style="color: var(--error-color); float: right;">required</span>');
+				}
+				if (!email.value && email.previousElementSibling.tagName !== 'SPAN') {
+					email.insertAdjacentHTML('beforebegin', '<span style="color: var(--error-color); float: right;">required</span>');
+				}
+			})
+			repassword.addEventListener('focusin', e => {
+				if (!firstName.value && firstName.previousElementSibling.tagName !== 'SPAN') {
+					firstName.pinsertAdjacentHTML('beforebegin', '<span style="color: var(--error-color); float: right;">required</span>');
+				}
+				if (!lastName.value && lastName.previousElementSibling.tagName !== 'SPAN') {
+					lastName.insertAdjacentHTML('beforebegin', '<span style="color: var(--error-color); float: right;">required</span>');
+				}
+				if (!userName.value && userName.previousElementSibling.tagName !== 'SPAN') {
+					userName.insertAdjacentHTML('beforebegin', '<span style="color: var(--error-color); float: right;">required</span>');
+				}
+				if (!email.value && email.previousElementSibling.tagName !== 'SPAN') {
+					email.insertAdjacentHTML('beforebegin', '<span style="color: var(--error-color); float: right;">required</span>');
+				}
+				if (!password.value && password.previousElementSibling.tagName !== 'SPAN') {
+					password.insertAdjacentHTML('beforebegin', '<span style="color: var(--error-color); float: right;">required</span>');
+				}
+			})
+			// check input by focusout
+			inputList.forEach(item => {
+				item.addEventListener('focusout', e => {
+					if (!e.target.value && e.target.previousElementSibling.tagName !== 'SPAN') {
+						e.target.insertAdjacentHTML('beforebegin', '<span style="color: var(--error-color); float: right;">required</span>');
+					} else if (e.target.value && e.target.previousElementSibling.tagName === 'SPAN') {
+						e.target.previousElementSibling.remove();
+					};
+				});
+			});
+			// check active input
+			inputList.forEach(item => {
+				if(item !== password) {
+					item.addEventListener('input', e => {
+						e.preventDefault;
+						if (e.target.value && e.target.previousElementSibling.tagName === 'SPAN') {
+							e.target.previousElementSibling.remove();
+						};
+					});
 				} else {
-					lev.previousElementSibling.style.display = "inline-block";
-					lev.classList = "lev error";
-					lev.nextElementSibling.classList = "error";
-					lev.nextElementSibling.innerText = "0%";
-					lev.lastElementChild.classList = "lev0 error";
+					// password strength level
+					// const lev1 = document.createElement('div');
+					// const lev2 = document.createElement('div');
+					// const levWrap = document.createElement('div').className = "lev";
+					// levWrap.appendChild('lev1').appendChild('lev2');
+					// const pwdSafetyWrap = document.createElement('div').className = "pwdSafetyWrap";
+					// pwdSafetyWrap.appendChild('levWrap');
+					// regular expressions for password strength
+					const strongStrength = new RegExp('^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[!@#\$%\^&\*])(?=.{8,})', 'g');
+					const mediumStrength = new RegExp('^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.{6,})', 'g');
+					const lowStrength = new RegExp('^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.{4,})', 'g');
+					const noStrength = new RegExp('^(?=.*[a-z])(?=.*[A-Z])|(?=.*[0-9])(?=.{2,})', 'g');
+					item.addEventListener('input', e => {
+						e.preventDefault;
+						if (e.target.value && e.target.previousElementSibling.tagName !== 'SPAN' &&  e.target.previousElementSibling.tagName !== 'DIV') {
+							e.target.insertAdjacentHTML('beforebegin', '<div class="pwd-safety-wrap"><span>Strength</span><div class="lev"><div></div><div></div></div><span></span></div>');
+						} else if (e.target.value && e.target.previousElementSibling.tagName === 'SPAN' && e.target.previousElementSibling.tagName !== 'DIV') {
+							e.target.previousElementSibling.remove();
+							e.target.insertAdjacentHTML('beforebegin', '<div class="pwd-safety-wrap"><span>Strength</span><div class="lev"><div></div><div></div></div><span></span></div>');
+						} else if (!e.target.value && e.target.previousElementSibling.tagName === 'DIV') {
+								e.target.previousElementSibling.remove();
+						};
+						const lev = document.querySelector('.lev');
+						// check strength of password
+						if (strongStrength.test(e.target.value)) {
+							lev.previousElementSibling.style.display = "inline-block";
+							lev.classList = "lev success";
+							lev.nextElementSibling.classList = "success";
+							lev.nextElementSibling.innerText = "100%";
+							lev.lastElementChild.classList = "lev100 success";
+						} else if (mediumStrength.test(e.target.value)) {
+							lev.previousElementSibling.style.display = "inline-block";
+							lev.classList = "lev success";
+							lev.nextElementSibling.classList = "success";
+							lev.nextElementSibling.innerText = "80%";
+							lev.lastElementChild.classList = "lev80 success";
+						} else if (mediumStrength.test(e.target.value)) {
+							lev.previousElementSibling.style.display = "inline-block";
+							lev.classList = "lev success";
+							lev.nextElementSibling.classList = "success";
+							lev.nextElementSibling.innerText = "60%";
+							lev.lastElementChild.classList = "lev60 success";
+						} else if (lowStrength.test(e.target.value)) {
+							lev.previousElementSibling.style.display = "inline-block";
+							lev.classList = "lev error";
+							lev.nextElementSibling.classList = "error";
+							lev.nextElementSibling.innerText = "40%";
+							lev.lastElementChild.classList = "lev40 error";
+						} else if (noStrength.test(e.target.value)) {
+							lev.previousElementSibling.style.display = "inline-block";
+							lev.classList = "lev error";
+							lev.nextElementSibling.classList = "error";
+							lev.nextElementSibling.innerText = "20%";
+							lev.lastElementChild.classList = "lev20 error";
+						} else {
+							lev.previousElementSibling.style.display = "inline-block";
+							lev.classList = "lev error";
+							lev.nextElementSibling.classList = "error";
+							lev.nextElementSibling.innerText = "0%";
+							lev.lastElementChild.classList = "lev0 error";
+						};
+					});
 				};
 			});
 			// register user
 			document.querySelector('#register-btn').addEventListener('click', e => {
 				e.preventDefault();
 				// input data
-				const firstName = registerForm.children[1];
-				const lastName = registerForm.children[3];
-				const userName = registerForm.children[5];
-				const email = registerForm.children[7];
-				const repassword = registerForm.children[11];
+				// const firstName = registerForm.children[1];
+				// const lastName = registerForm.children[3];
+				// const userName = registerForm.children[5];
+				// const email = registerForm.children[7];
+				// const repassword = registerForm.children[11];
 				// check if input data are filled
 				if(firstName.value.trim() && lastName.value.trim() && userName.value.trim() && email.value.trim() && password.value && repassword.value) {
 					if(password.value === repassword.value) {
@@ -174,6 +261,11 @@
 					}
 				} else {
 					alert("Not all inputs are filled");
+					inputList.forEach(item => {
+						if (item.tagName === 'INPUT' && !item.value && item.previousElementSibling.tagName !== 'SPAN') {
+							item.insertAdjacentHTML('beforebegin', '<span style="color: var(--error-color); float: right;">required</span>');
+						};
+					});
 				};
 			});
 
@@ -250,7 +342,7 @@
 					};
 				}).catch(err => {
 					alert(err.message);
-				});				
+				});
 			};
 		</script>
 	</body>

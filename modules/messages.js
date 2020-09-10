@@ -7,8 +7,8 @@ function insertMessage(message, userID, roomID) {
     runQuery(`
               INSERT INTO messages (message, userID, roomID)
               Values ('${message.replace(/\\/g, "&#92;")}', ${userID}, ${roomID})
-    `).then(() => {
-      resolve(message);
+    `).then(response => {
+      resolve(response);
     }).catch(err => {
       reject(err);
     });
@@ -22,7 +22,7 @@ function getMessages(room, pageNum) {
               INNER JOIN rooms ON messages.roomID = rooms.ID
               INNER JOIN users ON messages.userID = users.ID
               WHERE rooms.room LIKE '${room}' 
-              ORDER BY message_time LIMIT 8 OFFSET ${pageNum}
+              ORDER BY message_time DESC LIMIT 8 OFFSET ${pageNum}
     `).then(messages => {
       resolve(messages.map(message => {
         message.message = message.message.toString();
@@ -33,16 +33,31 @@ function getMessages(room, pageNum) {
     });
   });
 };
-function formatMessage(username, text) {
+
+function getMessage(msg_ID) {
+  return new Promise((resolve, reject) => {
+    runQuery(`
+              SELECT messages.* FROM messages
+              WHERE messages.ID = ${msg_ID}
+    `).then(message => {
+      resolve(message);
+    }).catch(err => {
+      reject(err);
+    });
+  });
+};
+
+function formatMessage(username, text, actTime = moment().format('DD.MM.YY H:mm')) {
   return {
     username,
     text,
-    time: moment().format('DD.MM.YY H:mm')
+    time: actTime
   };
 };
 
 module.exports = {
   insertMessage,
   formatMessage,
-  getMessages
+  getMessages,
+  getMessage
 };

@@ -223,38 +223,6 @@ nav #image-upload {
 	border-radius: 6px;
 }
 
-.form-control > label[for="password"] {
-	float: left;
-}
-/*
-.form-control > div {
-	display: flex;
-	justify-content: space-between;
-	padding-right: 40px;
-}
-
-.form-control > div > div {
-	width: 60px;
-	height: 16px;
-	background-color: var(--error-color);
-	position: relative;
-	display: none;
-}
-
-.form-control > div > div::before {
-	content: "Safety";
-	color: white;
-	position: absolute;
-	left: -54px;
-}
-
-.form-control > div > div::after {
-	content: "30%";
-	color: white;
-	position: absolute;
-	right: -40px;
-}
-*/
 .form-control #createRoomInput {
 	margin: 0;
 }
@@ -273,34 +241,30 @@ nav #image-upload {
 }
 
 /* password safety */
-.form-control > div > .safetyWrap {
+.form-control > .pwd-safety-wrap {
 	height: 16px;
+	float: right;
 	display: flex;
 	justify-content: space-between;
 	align-items: center;
 }
 
-.form-control > div > .safetyWrap > div.lev {
+.form-control > .pwd-safety-wrap > .lev {
 	width: 60px;
 	height: 16px;
 	display: inline-block;
 	position: relative;
 }
 
-.form-control > div > .safetyWrap > div.lev > div:first-child {
+.form-control > .pwd-safety-wrap > .lev > div:first-child {
 	width: 60px;
 	height: 16px;
 	opacity: .5;
 	position: absolute;
 }
 
-.form-control > div > .safetyWrap > div.lev > div:last-child {
-	height: 16px;
-	position: absolute;
-}
-
 /* password safety level text */
-.form-control > div > label[for="password"] + div > span:first-child {
+.form-control > .pwd-safety-wrap > span:first-child {
 	font-size: 14px;
 	color: white;
 	margin-right: 6px;
@@ -308,51 +272,61 @@ nav #image-upload {
 }
 
 /* password safety level num */
-.form-control > div > label[for="password"] + div > span:last-child {
+.form-control > .pwd-safety-wrap > span:last-child {
 	width: 40px;
 	font-size: 14px;
 	text-align: end;
 }
 
 /* password safety level num red */
-.form-control > div > .safetyWrap > span.error {
+.form-control > .pwd-safety-wrap > span.error {
 	color: var(--error-color);
 }
 
 /* password safety level red*/
-.form-control > div > .safetyWrap > div.lev.error > div {
+.form-control > .pwd-safety-wrap > .lev.error > div {
 	background-color: var(--error-color);
 }
 
-.form-control > div > .safetyWrap > div.lev > div.lev20 {
+.form-control > .pwd-safety-wrap > .lev > .lev20 {
+	height: 16px;
 	width: 12px;
+	position: absolute;
 }
 
-.form-control > div > .safetyWrap > div.lev > div.lev40 {
+.form-control > .pwd-safety-wrap > .lev > .lev40 {
+	height: 16px;
 	width: 24px;
+	position: absolute;
 }
 
 /* password safety level num green*/
-.form-control > div > .safetyWrap > span.success {
+.form-control > .pwd-safety-wrap > span.success {
 	color: var(--success-color);
 }
 
 /* password safety level green*/
 
-.form-control > div > .safetyWrap > div.lev.success > div {
+.form-control > .pwd-safety-wrap > div.lev.success > div {
 	background-color: var(--success-color);
 }
 
-.form-control > div > .safetyWrap > div.lev > div.lev60 {
+.form-control > .pwd-safety-wrap > .lev > .lev60 {
+	height: 16px;
 	width: 36px;
+	position: absolute;
 }
 
-.form-control > div > .safetyWrap > div.lev > div.lev80 {
+.form-control > .pwd-safety-wrap > .lev > .lev80 {
 	width: 48px;
+	height: 16px;
+	position: absolute;
 }
 
-.form-control > div > .safetyWrap > div.lev > div.lev100 {
+.form-control > .pwd-safety-wrap > .lev > .lev100 {
+	height: 16px;
 	width: 60px;
+	position: absolute;
 }
 
 /* Join Page */
@@ -399,6 +373,7 @@ nav #image-upload {
 .join-main label {
 	display: block;
 	margin-bottom: 5px;
+	float: left;
 }
 
 .join-main input[type='text'],
@@ -511,6 +486,10 @@ nav #image-upload {
 		bottom: -70px;
 	}
 
+	.chat-form-container > nav > button:last-child {
+		display: block !important;
+	}
+
 	.chat-form-container input[type="text"] {
 		font-size: 12px;
 		height: 32px;
@@ -539,27 +518,27 @@ nav #image-upload {
 	}
 
 	/* password safety */
-	.form-control > div > .safetyWrap {
+	.form-control > .pwd-safety-wrap {
 		height: 12px;
 	}
 
-	.form-control > div > .safetyWrap > div.lev {
+	.form-control > .pwd-safety-wrap > .lev {
 		height: 12px;
 	}
 
-	.form-control > div > .safetyWrap > div.lev > div:first-child,
-	.form-control > div > .safetyWrap > div.lev > div:last-child {
+	.form-control > .pwd-safety-wrap > div.lev > div:first-child,
+	.form-control > .pwd-safety-wrap > div.lev > div:last-child {
 		height: 12px;
 	}
 	
 	/* password safety level num */
-	.form-control > div > label[for="password"] + div > span:last-child {
+	.form-control > .pwd-safety-wrap > span:last-child {
 		font-size: 10px;
 		width: 28px;
 	}
 	
 	/* password safety level text */
-	.form-control > div > label[for="password"] + div > span:first-child {
+	.form-control > .pwd-safety-wrap > span:first-child {
 		font-size: 10px;
 	}
 }

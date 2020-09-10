@@ -97,21 +97,22 @@
             };
         };
         x.addListener(mobileMedia);
+        
         // open and close mobile menu for chat
-        let navUp = false;
+        let navShow = false;
         document.querySelector('.btn.menu').addEventListener('click', e => {
             e.preventDefault();
             nav.style.display = 'flex';
-            if (navUp === false) {
+            if (navShow === false) {
                 e.target.parentElement.style.backgroundColor = "#e6e9ff";
                 e.target.parentElement.style.color = "black";
                 nav.id = "up";
-                navUp = true;
+                navShow = true;
             } else {
                 e.target.parentElement.style.backgroundColor = "black";
                 e.target.parentElement.style.color = "#e6e9ff";
                 nav.id = "down";
-                navUp = false;
+                navShow = false;
             };
         });
         
@@ -163,13 +164,13 @@
         });
 
         // lazy loading
-        let pageNum = 1;
+        let pageNum = 0;
         document.querySelector('.chat-messages').onscroll = function () {
-            if (chatMessages.children.length > pageNum + 7 && this.scrollTop === 0) {
+            if (chatMessages.children.length > pageNum + 8 && this.scrollTop === 0) {
                 pageNum += 8;
                 socket.emit('old-messages', {room, pageNum});
                 // scroll down
-                chatMessages.scrollTop = chatMessages.scrollHeight;
+                chatMessages.scrollTop = chatMessages.clientHeight;
             }; 
         };
 
@@ -240,16 +241,6 @@
             // add message at the beginning to chat
             const chat = document.querySelector('.chat-messages');
             chat.insertBefore(div, chat.firstChild);
-        };
-        // add room name to DOM
-        function outputRoomName(room) {
-            for(let i = 0; i < roomName.length; i++) {
-                roomName[i].innerText = room;
-            };
-        };
-        // add users to DOM
-        function outputUsers(users) {
-            userList.innerHTML = `${users.map(user => `<li>${user}</li>`).join('')}`;
         };
         // add room name to DOM
         function outputRoomName(room) {

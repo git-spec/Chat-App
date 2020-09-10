@@ -121,7 +121,7 @@ io.on('connection', socket => {
             text: msg.message,
             time: moment(msg.message_time).format('DD.MM.YY H:mm')
           });
-          socket.emit('history', formatMessage(msg.username, msg.message))
+          socket.emit('history', formatMessage(msg.username, msg.message, moment(msg.message_time).format('DD.MM.YY H:mm')));
         });
       }).catch(err => {
         console.log(err);
@@ -351,7 +351,7 @@ app.get('/chat/:room', (req, res) => {
         getMessages(req.params.room, 1).then(messages => {
           const msgs = [];
           messages.forEach(msg => {
-            msgs.push({
+            msgs.unshift({
               username: msg.username,
               text: msg.message,
               time: moment(msg.message_time).format('DD.MM.YY H:mm')

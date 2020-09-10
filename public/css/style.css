@@ -486,6 +486,10 @@ nav #image-upload {
 		bottom: -70px;
 	}
 
+	.chat-form-container > nav > button:last-child {
+		display: block !important;
+	}
+
 	.chat-form-container input[type="text"] {
 		font-size: 12px;
 		height: 32px;

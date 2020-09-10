@@ -97,6 +97,7 @@
             };
         };
         x.addListener(mobileMedia);
+        
         // open and close mobile menu for chat
         let navShow = false;
         document.querySelector('.btn.menu').addEventListener('click', e => {
@@ -163,13 +164,13 @@
         });
 
         // lazy loading
-        let pageNum = 1;
+        let pageNum = 0;
         document.querySelector('.chat-messages').onscroll = function () {
-            if (chatMessages.children.length > pageNum + 7 && this.scrollTop === 0) {
+            if (chatMessages.children.length > pageNum + 8 && this.scrollTop === 0) {
                 pageNum += 8;
                 socket.emit('old-messages', {room, pageNum});
                 // scroll down
-                chatMessages.scrollTop = chatMessages.scrollHeight;
+                chatMessages.scrollTop = chatMessages.clientHeight;
             }; 
         };
 

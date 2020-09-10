@@ -178,10 +178,10 @@
 					item.addEventListener('input', e => {
 						e.preventDefault;
 						if (e.target.value && e.target.previousElementSibling.tagName !== 'SPAN' &&  e.target.previousElementSibling.tagName !== 'DIV') {
-							e.target.insertAdjacentHTML('beforebegin', '<div class="pwd-safety-wrap"><span>Strength</span><div class="lev"><div></div><div></div></div><span></span></div>');
+							e.target.insertAdjacentHTML('beforebegin', '<div class="pwd-safety-wrap"><span>Safety</span><div class="lev"><div></div><div></div></div><span></span></div>');
 						} else if (e.target.value && e.target.previousElementSibling.tagName === 'SPAN' && e.target.previousElementSibling.tagName !== 'DIV') {
 							e.target.previousElementSibling.remove();
-							e.target.insertAdjacentHTML('beforebegin', '<div class="pwd-safety-wrap"><span>Strength</span><div class="lev"><div></div><div></div></div><span></span></div>');
+							e.target.insertAdjacentHTML('beforebegin', '<div class="pwd-safety-wrap"><span>Safety</span><div class="lev"><div></div><div></div></div><span></span></div>');
 						} else if (!e.target.value && e.target.previousElementSibling.tagName === 'DIV') {
 								e.target.previousElementSibling.remove();
 						};

@@ -22,7 +22,7 @@ function getMessages(room, pageNum) {
               INNER JOIN rooms ON messages.roomID = rooms.ID
               INNER JOIN users ON messages.userID = users.ID
               WHERE rooms.room LIKE '${room}' 
-              ORDER BY message_time LIMIT 8 OFFSET ${pageNum}
+              ORDER BY message_time DESC LIMIT 8 OFFSET ${pageNum}
     `).then(messages => {
       resolve(messages.map(message => {
         message.message = message.message.toString();
@@ -34,11 +34,11 @@ function getMessages(room, pageNum) {
   });
 };
 
-function formatMessage(username, text) {
+function formatMessage(username, text, actTime = moment().format('DD.MM.YY H:mm')) {
   return {
     username,
     text,
-    time: moment().format('DD.MM.YY H:mm')
+    time: actTime
   };
 };
 

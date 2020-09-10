@@ -7,8 +7,8 @@ function insertMessage(message, userID, roomID) {
     runQuery(`
               INSERT INTO messages (message, userID, roomID)
               Values ('${message.replace(/\\/g, "&#92;")}', ${userID}, ${roomID})
-    `).then(() => {
-      resolve(message);
+    `).then(response => {
+      resolve(response);
     }).catch(err => {
       reject(err);
     });
@@ -34,6 +34,19 @@ function getMessages(room, pageNum) {
   });
 };
 
+function getMessage(msg_ID) {
+  return new Promise((resolve, reject) => {
+    runQuery(`
+              SELECT messages.* FROM messages
+              WHERE messages.ID = ${msg_ID}
+    `).then(message => {
+      resolve(message);
+    }).catch(err => {
+      reject(err);
+    });
+  });
+};
+
 function formatMessage(username, text, actTime = moment().format('DD.MM.YY H:mm')) {
   return {
     username,
@@ -45,5 +58,6 @@ function formatMessage(username, text, actTime = moment().format('DD.MM.YY H:mm'
 module.exports = {
   insertMessage,
   formatMessage,
-  getMessages
+  getMessages,
+  getMessage
 };

@@ -166,7 +166,8 @@
         // lazy loading
         let pageNum = 0;
         document.querySelector('.chat-messages').onscroll = function () {
-            if (chatMessages.children.length > pageNum + 8 && this.scrollTop === 0) {
+            const firstMsg = chatMessages.children[0].lastElementChild.innerText;
+            if (this.scrollTop === 0 && chatMessages.children.length > pageNum + 8 && chatMessages.children[0].lastElementChild.innerText !== 'Welcome to ChatApp!') {
                 pageNum += 8;
                 socket.emit('old-messages', {room, pageNum});
                 // scroll down
@@ -242,6 +243,7 @@
             const chat = document.querySelector('.chat-messages');
             chat.insertBefore(div, chat.firstChild);
         };
+        
         // add room name to DOM
         function outputRoomName(room) {
             for(let i = 0; i < roomName.length; i++) {

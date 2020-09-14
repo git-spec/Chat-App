@@ -322,7 +322,7 @@ app.get('/chat/:room', (req, res) => {
       getRoom(req.params.room).then(room => {
         const roomID = room[0].ID;
         // get history of messages from db
-        getMessages(req.params.room, 1).then(messages => {
+        getMessages(req.params.room).then(messages => {
           const msgs = [];
           messages.forEach(msg => {
             msgs.unshift({

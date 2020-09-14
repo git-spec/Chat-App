@@ -15,7 +15,7 @@ function insertMessage(message, userID, roomID) {
   });
 };
 
-function getMessages(room, pageNum) {
+function getMessages(room, pageNum = 0) {
   return new Promise((resolve, reject) => {
     runQuery(`
               SELECT messages.*, users.username as username FROM messages

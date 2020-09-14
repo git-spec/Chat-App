@@ -18,7 +18,6 @@ function registerUser(firstname, lastname, username, email, password) {
       message += "To verify your email address please click on the following link:\n";
       message += `http://localhost:3000/verify/${email}`;           
       emailSender.sendEmail(email, 'Verify Email', message).then(() => {
-        console.log('email sent');
         resolve();
       }).catch(error => {
         reject(error);
@@ -55,7 +54,6 @@ function loginUser(username, password) {
         // password correct or not
         if (passwordHash.verify(password, user[0].password)) {
           // verified or not
-          console.log('verified', user[0].verified);
           if (user[0].verified == 1) {
             resolve(user[0]);
           } else {

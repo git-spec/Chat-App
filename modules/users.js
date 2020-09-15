@@ -16,7 +16,8 @@ function registerUser(firstname, lastname, username, email, password) {
       let message = `Hello ${firstname} ${lastname},\n`;
       message += "Welcome to our website!\n";
       message += "To verify your email address please click on the following link:\n";
-      message += `http://localhost:3000/verify/${email}`;           
+      // message += `http://localhost:3000/verify/${email}`;
+      message += `http://www.coding-school.org/verify/${email}`;
       emailSender.sendEmail(email, 'Verify Email', message).then(() => {
         resolve();
       }).catch(error => {
@@ -66,7 +67,7 @@ function loginUser(username, password) {
       };
     }).catch(err => {
       // server error
-      reject(err); 
+      reject(err);
     });
   });
 };
@@ -104,7 +105,7 @@ function getUsersRoom(room) {
     `).then(users => {
       resolve(users);
     }).catch(err => {
-      reject(err); 
+      reject(err);
     });
   });
 };

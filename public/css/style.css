@@ -66,10 +66,12 @@ fieldset > legend {
 	margin-bottom: 20px;
 }
 
-fieldset > a {
-	position: absolute;
-	top: -2.6rem;
-	right: 0;
+fieldset > legend:first-of-type {
+	float: left;
+}
+
+fieldset > a:first-of-type {
+	float: right;
 	color: white;
 	text-decoration: underline;
 }
@@ -228,6 +230,10 @@ nav #image-upload {
 
 .form-control > input {
 	margin-bottom: .8rem;
+}
+
+.form-control > label:first-of-type {
+	clear: both;
 }
 
 .form-control > label[for="password"] {
